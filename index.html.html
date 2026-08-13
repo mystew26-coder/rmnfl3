@@ -1,0 +1,4466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="description" content="RMNFL League Platform - Season 2026">
+  <title>RMNFL League Platform</title>
+
+  <!-- Optional enhancement CDNs. The app does NOT depend on them to render. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --card: #0f1425;
+      --card2: #12192c;
+      --red: #dc2626;
+      --red2: #ef4444;
+      --gold: #f59e0b;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(148,163,184,.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(220,38,38,.08), transparent 25%),
+        radial-gradient(circle at 85% 20%, rgba(245,158,11,.05), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .bebas {
+      font-family: "Bebas Neue", Impact, sans-serif;
+      letter-spacing: .04em;
+    }
+
+    .glass {
+      background: linear-gradient(145deg, rgba(18,25,44,.94), rgba(10,14,26,.92));
+      border: 1px solid var(--border);
+      box-shadow:
+        0 12px 40px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.025);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(10,14,26,.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 66px;
+      padding: 0 18px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .brand {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: 8px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #ef4444, #991b1b);
+      box-shadow: 0 8px 25px rgba(220,38,38,.3);
+      font-weight: 900;
+      color: white;
+    }
+
+    .brand-name {
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-size: 23px;
+      white-space: nowrap;
+      letter-spacing: .06em;
+    }
+
+    .nav {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      min-width: max-content;
+    }
+
+    .nav button {
+      color: #9ca3af;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: .2s;
+    }
+
+    .nav button:hover {
+      color: white;
+      background: rgba(255,255,255,.04);
+    }
+
+    .nav button.active {
+      color: white;
+      background: rgba(220,38,38,.15);
+      border-color: rgba(220,38,38,.3);
+      box-shadow: inset 0 -2px 0 var(--red);
+    }
+
+    .ticker {
+      height: 38px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      background: #080b14;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ticker-label {
+      flex: 0 0 auto;
+      padding: 0 14px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      background: var(--red);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    .ticker-track {
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+      padding-left: 25px;
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-45%); }
+    }
+
+    main {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn .2s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: .2; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      padding: 32px;
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background:
+        linear-gradient(110deg, rgba(220,38,38,.18), transparent 45%),
+        linear-gradient(135deg, #131a2d, #0c1120);
+      border: 1px solid rgba(220,38,38,.2);
+    }
+
+    .hero:after {
+      content: "RMNFL";
+      position: absolute;
+      right: -30px;
+      bottom: -65px;
+      font: 180px/1 "Bebas Neue", Impact, sans-serif;
+      color: rgba(255,255,255,.025);
+      pointer-events: none;
+    }
+
+    .hero-kicker {
+      color: var(--red2);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 5px 0;
+      font: 76px/1 "Bebas Neue", Impact, sans-serif;
+      letter-spacing: .03em;
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin: 8px 0 0;
+      max-width: 650px;
+    }
+
+    .season-badge {
+      position: absolute;
+      right: 28px;
+      top: 28px;
+      padding: 10px 16px;
+      border: 1px solid rgba(245,158,11,.35);
+      background: rgba(245,158,11,.08);
+      color: var(--gold);
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .section-title {
+      margin: 30px 0 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font: 30px/1 "Bebas Neue", Impact, sans-serif;
+      letter-spacing: .06em;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 18px;
+    }
+
+    .two-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .three-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .stat-card {
+      padding: 20px;
+      border-radius: 14px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .stat-value {
+      margin-top: 7px;
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .stat-accent {
+      color: var(--red2);
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 14px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .card-title h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 12px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #171f34;
+      color: white;
+      padding: 9px 13px;
+      font-size: 12px;
+      font-weight: 800;
+      transition: .18s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: #1d2944;
+    }
+
+    .btn-red {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .btn-red:hover {
+      background: #b91c1c;
+    }
+
+    .btn-gold {
+      background: rgba(245,158,11,.12);
+      border-color: rgba(245,158,11,.35);
+      color: var(--gold);
+    }
+
+    .btn-green {
+      background: rgba(34,197,94,.1);
+      border-color: rgba(34,197,94,.3);
+      color: #86efac;
+    }
+
+    .btn-danger {
+      background: rgba(220,38,38,.1);
+      border-color: rgba(220,38,38,.25);
+      color: #fca5a5;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .score-row:last-child {
+      border-bottom: 0;
+    }
+
+    .team-name {
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .score {
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .final {
+      color: #86efac;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .announcement {
+      padding: 15px;
+      border-left: 3px solid var(--red);
+      background: rgba(255,255,255,.025);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 10px;
+    }
+
+    .announcement strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .announcement small {
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    th {
+      background: #0b1020;
+      color: #94a3b8;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    th:hover {
+      color: white;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,.02);
+    }
+
+    .division {
+      margin-top: 20px;
+    }
+
+    .division-header {
+      padding: 10px 12px;
+      background: rgba(220,38,38,.08);
+      border-left: 3px solid var(--red);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .conference-title {
+      font: 42px/1 "Bebas Neue", Impact, sans-serif;
+      margin: 28px 0 8px;
+      color: #e2e8f0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .form-grid.three {
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #090e1b;
+      color: white;
+      padding: 10px 11px;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(220,38,38,.7);
+      box-shadow: 0 0 0 3px rgba(220,38,38,.1);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .week-selector {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+    }
+
+    .week-btn {
+      flex: 0 0 auto;
+      padding: 9px 13px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #10172a;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .week-btn.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: white;
+    }
+
+    .game-card {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      align-items: center;
+      gap: 15px;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .game-card .away {
+      text-align: right;
+    }
+
+    .game-card .home {
+      text-align: left;
+    }
+
+    .vs {
+      color: #64748b;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .game-meta {
+      min-width: 120px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .game-final {
+      color: #86efac;
+      font-weight: 900;
+      font-size: 10px;
+    }
+
+    .roster-table td {
+      font-size: 11px;
+    }
+
+    .ovr {
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .pos-badge {
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: rgba(59,130,246,.12);
+      color: #93c5fd;
+      font-weight: 900;
+      font-size: 9px;
+    }
+
+    .trade-card {
+      position: relative;
+      padding: 17px;
+      border-radius: 13px;
+    }
+
+    .trade-card .trade-ovr {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .trade-player {
+      font-size: 19px;
+      font-weight: 900;
+      padding-right: 50px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .pill-red {
+      background: rgba(220,38,38,.12);
+      color: #fca5a5;
+    }
+
+    .pill-green {
+      background: rgba(34,197,94,.1);
+      color: #86efac;
+    }
+
+    .pill-gold {
+      background: rgba(245,158,11,.1);
+      color: #fcd34d;
+    }
+
+    .url-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+    }
+
+    .copy-btn {
+      min-width: 80px;
+    }
+
+    .big-link {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 58px;
+      background: var(--red);
+      color: white;
+      border-radius: 10px;
+      font-weight: 900;
+      transition: .2s;
+    }
+
+    .big-link:hover {
+      background: #b91c1c;
+      transform: translateY(-1px);
+    }
+
+    .channel-map {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 8px;
+    }
+
+    .channel {
+      padding: 12px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .role {
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 7px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid var(--border);
+    }
+
+    .role-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .login-box {
+      max-width: 480px;
+      margin: 40px auto;
+    }
+
+    .login-icon {
+      width: 65px;
+      height: 65px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: rgba(220,38,38,.12);
+      border: 1px solid rgba(220,38,38,.25);
+      color: var(--red2);
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .portal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .portal-team {
+      font: 42px/1 "Bebas Neue", Impact, sans-serif;
+    }
+
+    .admin-lock {
+      max-width: 450px;
+      margin: 30px auto;
+    }
+
+    .danger-zone {
+      border-color: rgba(220,38,38,.3);
+    }
+
+    .empty {
+      padding: 35px 15px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,.75);
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal {
+      width: min(650px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      border-radius: 15px;
+    }
+
+    .toast-container {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(360px, calc(100vw - 36px));
+    }
+
+    .toast {
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: #151d31;
+      border: 1px solid var(--border);
+      box-shadow: 0 15px 40px rgba(0,0,0,.35);
+      font-size: 12px;
+      font-weight: 700;
+      animation: toastIn .2s ease;
+    }
+
+    .toast.success {
+      border-left: 3px solid var(--green);
+    }
+
+    .toast.error {
+      border-left: 3px solid var(--red);
+    }
+
+    .toast.info {
+      border-left: 3px solid var(--blue);
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 35px 15px 50px;
+      color: #475569;
+      font-size: 10px;
+    }
+
+    .loading {
+      min-height: 200px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1000px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+
+      .three-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero h1 {
+        font-size: 60px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      main {
+        padding: 14px;
+      }
+
+      .nav-wrap {
+        padding: 0 10px;
+      }
+
+      .brand-name {
+        display: none;
+      }
+
+      .hero {
+        padding: 25px 20px;
+        min-height: 250px;
+      }
+
+      .hero h1 {
+        font-size: 52px;
+      }
+
+      .season-badge {
+        position: static;
+        width: max-content;
+        margin-top: 18px;
+      }
+
+      .stats-grid,
+      .two-grid,
+      .three-grid,
+      .form-grid,
+      .form-grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .game-card {
+        grid-template-columns: 1fr auto 1fr;
+      }
+
+      .game-meta {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+
+      .url-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .url-row input {
+        grid-column: 1 / -1;
+      }
+
+      .channel-map {
+        grid-template-columns: 1fr;
+      }
+
+      .portal-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========================= NAVIGATION ========================= -->
+  <header class="topbar">
+    <div class="nav-wrap">
+      <div class="brand">
+        <div class="brand-mark">RM</div>
+        <div class="brand-name">RMNFL</div>
+      </div>
+
+      <nav class="nav" id="mainNav">
+        <button data-view="home" class="active">Home</button>
+        <button data-view="standings">Standings</button>
+        <button data-view="schedule">Schedule</button>
+        <button data-view="scores">Scores</button>
+        <button data-view="rosters">Rosters</button>
+        <button data-view="rules">Rules</button>
+        <button data-view="tradeblock">Trade Block</button>
+        <button data-view="media">Media</button>
+        <button data-view="owner">Owner Portal</button>
+        <button data-view="madden">Madden Sync</button>
+        <button data-view="discord">Discord</button>
+        <button data-view="admin">Admin</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="ticker">
+    <div class="ticker-label">RMNFL NEWS</div>
+    <div class="ticker-track" id="newsTicker">
+      Welcome to the RMNFL League Platform • Season 2026 • Play hard. Compete fairly. Respect the league. •
+      Welcome to the RMNFL League Platform • Season 2026 •
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ========================= HOME ========================= -->
+    <section class="page active" id="page-home">
+
+      <div class="hero">
+        <div class="hero-kicker">RMNFL League Platform</div>
+        <h1>WELCOME TO RMNFL</h1>
+        <p>
+          The official league headquarters for standings, schedules, scores,
+          rosters, trades, media, owners, Madden synchronization and league administration.
+        </p>
+        <div class="season-badge" id="heroSeason">SEASON 2026</div>
+      </div>
+
+      <div class="grid stats-grid">
+        <div class="glass stat-card">
+          <div class="stat-label">Total Teams</div>
+          <div class="stat-value">32</div>
+        </div>
+
+        <div class="glass stat-card">
+          <div class="stat-label">Current Week</div>
+          <div class="stat-value stat-accent" id="homeWeekStat">1</div>
+        </div>
+
+        <div class="glass stat-card">
+          <div class="stat-label">Games Played</div>
+          <div class="stat-value" id="homeGamesPlayed">0</div>
+        </div>
+
+        <div class="glass stat-card">
+          <div class="stat-label">Active Trades</div>
+          <div class="stat-value" id="homeTrades">0</div>
+        </div>
+      </div>
+
+      <div class="grid two-grid">
+
+        <div>
+          <div class="section-title">
+            <h2>Recent Scores</h2>
+            <span>Latest completed games</span>
+          </div>
+          <div class="glass card" id="recentScores"></div>
+        </div>
+
+        <div>
+          <div class="section-title">
+            <h2>Upcoming Games</h2>
+            <span>Next league matchups</span>
+          </div>
+          <div class="glass card" id="upcomingGames"></div>
+        </div>
+
+      </div>
+
+      <div class="section-title">
+        <h2>League Announcements</h2>
+        <span>Commissioner updates</span>
+      </div>
+
+      <div class="glass card" id="homeAnnouncements"></div>
+
+    </section>
+
+
+    <!-- ========================= STANDINGS ========================= -->
+    <section class="page" id="page-standings">
+
+      <div class="section-title">
+        <h2>League Standings</h2>
+        <span>Click any column to sort</span>
+      </div>
+
+      <div id="standingsContent"></div>
+
+    </section>
+
+
+    <!-- ========================= SCHEDULE ========================= -->
+    <section class="page" id="page-schedule">
+
+      <div class="section-title">
+        <h2>League Schedule</h2>
+        <span id="scheduleWeekLabel">Week 1</span>
+      </div>
+
+      <div class="glass card">
+        <div class="week-selector" id="weekSelector"></div>
+      </div>
+
+      <div style="margin-top:15px" id="scheduleGames"></div>
+
+    </section>
+
+
+    <!-- ========================= SCORES ========================= -->
+    <section class="page" id="page-scores">
+
+      <div class="section-title">
+        <h2>Score Reporting</h2>
+        <span>Submit official game results</span>
+      </div>
+
+      <div class="glass card">
+        <div class="field" style="max-width:300px">
+          <label>Reporting Week</label>
+          <select id="scoreWeekSelect"></select>
+        </div>
+      </div>
+
+      <div style="margin-top:15px" id="scoreGames"></div>
+
+    </section>
+
+
+    <!-- ========================= ROSTERS ========================= -->
+    <section class="page" id="page-rosters">
+
+      <div class="section-title">
+        <h2>Team Rosters</h2>
+        <span>53-man roster and depth chart</span>
+      </div>
+
+      <div class="glass card">
+        <div class="field">
+          <label>Select Team</label>
+          <select id="rosterTeamSelect"></select>
+        </div>
+      </div>
+
+      <div style="margin-top:15px" class="grid two-grid">
+        <div class="glass card">
+          <div class="card-title">
+            <h3 id="rosterTeamTitle">Roster</h3>
+            <span class="pill pill-gold">53 Players</span>
+          </div>
+          <div class="table-wrap">
+            <table class="roster-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>OVR</th>
+                  <th>Age</th>
+                  <th>Speed</th>
+                </tr>
+              </thead>
+              <tbody id="rosterTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="glass card">
+            <div class="card-title">
+              <h3>Depth Chart</h3>
+            </div>
+            <div id="depthChart"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================= RULES ========================= -->
+    <section class="page" id="page-rules">
+
+      <div class="section-title">
+        <h2>RMNFL Rulebook</h2>
+        <span>Season 2026</span>
+      </div>
+
+      <div class="grid two-grid">
+
+        <div class="glass card">
+          <div class="card-title"><h3>01 — General Rules</h3></div>
+          <ul class="muted small">
+            <li>All owners are expected to play fairly and respect league members.</li>
+            <li>Games must be played using the approved league Madden settings.</li>
+            <li>Owners are responsible for checking the league platform regularly.</li>
+            <li>Do not intentionally exploit glitches, disconnects or gameplay bugs.</li>
+            <li>Commissioner decisions are final unless overturned by league administration.</li>
+            <li>All official scores must be reported through the league platform.</li>
+          </ul>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title"><h3>02 — Trade Rules</h3></div>
+          <ul class="muted small">
+            <li>Trades are subject to a 48-hour review window.</li>
+            <li>Commissioner approval is required before a trade becomes official.</li>
+            <li>Collusion, intentionally unfair trades and roster dumping are prohibited.</li>
+            <li>Trade Block listings are not automatically approved trades.</li>
+            <li>Both owners must agree to the submitted trade.</li>
+          </ul>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title"><h3>03 — Scheduling Rules</h3></div>
+          <ul class="muted small">
+            <li>Owners must initiate scheduling within 48 hours of the matchup being posted.</li>
+            <li>Games should be completed within 72 hours.</li>
+            <li>Owners must communicate if they cannot meet the normal window.</li>
+            <li>Repeated scheduling failures may result in discipline.</li>
+          </ul>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title"><h3>04 — Discipline Policy</h3></div>
+          <table>
+            <tr><td>Late Game</td><td><strong>$5,000</strong></td></tr>
+            <tr><td>No-Show</td><td><strong>$10,000</strong></td></tr>
+            <tr><td>Unsportsmanlike Conduct</td><td><strong>$25,000</strong></td></tr>
+          </table>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title"><h3>05 — Playoff Rules</h3></div>
+          <ul class="muted small">
+            <li>Playoffs are determined by official league standings.</li>
+            <li>Tiebreakers are applied in league-defined order.</li>
+            <li>Playoff games receive the same scheduling requirements.</li>
+            <li>Commissioner may establish special playoff deadlines.</li>
+          </ul>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title"><h3>06 — Madden Sync Rules</h3></div>
+          <ul class="muted small">
+            <li>Owners should sync results after every completed game.</li>
+            <li>Manual score entry may be used when synchronization is unavailable.</li>
+            <li>Owners should report sync errors to administration.</li>
+            <li>Official league records take priority over unofficial screenshots.</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================= TRADE BLOCK ========================= -->
+    <section class="page" id="page-tradeblock">
+
+      <div class="section-title">
+        <h2>Trade Block</h2>
+        <span>Players available for discussion</span>
+      </div>
+
+      <div class="glass card">
+        <div class="card-title">
+          <h3>Submit Trade Block Player</h3>
+        </div>
+
+        <form id="tradeForm">
+          <div class="form-grid three">
+
+            <div class="field">
+              <label>Owner Name *</label>
+              <input id="tradeOwner" required>
+            </div>
+
+            <div class="field">
+              <label>Team *</label>
+              <select id="tradeTeam" required></select>
+            </div>
+
+            <div class="field">
+              <label>Player Name *</label>
+              <input id="tradePlayer" required>
+            </div>
+
+            <div class="field">
+              <label>Position *</label>
+              <select id="tradePosition" required>
+                <option value="">Select</option>
+                <option>QB</option>
+                <option>RB</option>
+                <option>WR</option>
+                <option>TE</option>
+                <option>OL</option>
+                <option>DL</option>
+                <option>LB</option>
+                <option>CB</option>
+                <option>S</option>
+                <option>K</option>
+                <option>P</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>OVR *</label>
+              <input id="tradeOvr" type="number" min="0" max="99" required>
+            </div>
+
+            <div class="field">
+              <label>Asking Price / Notes *</label>
+              <input id="tradeNotes" required>
+            </div>
+
+            <div class="field full">
+              <button class="btn btn-red" type="submit">Add To Trade Block</button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+      <div class="section-title">
+        <h2>Available Players</h2>
+      </div>
+
+      <div class="grid three-grid" id="tradeBlockCards"></div>
+
+    </section>
+
+
+    <!-- ========================= MEDIA ========================= -->
+    <section class="page" id="page-media">
+
+      <div class="section-title">
+        <h2>RMNFL Media</h2>
+        <span>League broadcasts and highlights</span>
+      </div>
+
+      <div class="glass card">
+        <div class="card-title">
+          <h3>YouTube / Twitch Broadcast</h3>
+          <span class="pill pill-red">LIVE MEDIA</span>
+        </div>
+
+        <div class="field">
+          <label>YouTube Channel / Broadcast URL</label>
+          <div class="url-row">
+            <input id="mediaYoutubeUrl" readonly>
+            <button class="btn copy-btn" data-copy-input="mediaYoutubeUrl">Copy</button>
+            <button class="btn btn-red" id="openYoutubeBtn">Open</button>
+          </div>
+        </div>
+
+        <div style="margin-top:15px">
+          <div style="aspect-ratio:16/9;background:#05070d;border-radius:12px;display:grid;place-items:center;border:1px solid var(--border)">
+            <div style="text-align:center">
+              <div style="font-size:42px">▶</div>
+              <div class="muted small">League broadcast embed area</div>
+              <div class="muted small">Paste your YouTube broadcast URL in Admin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid two-grid">
+
+        <div class="glass card">
+          <div class="card-title">
+            <h3>Recent Highlights</h3>
+          </div>
+          <div id="highlightsList"></div>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title">
+            <h3>Stream Schedule</h3>
+          </div>
+          <div id="streamSchedule"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================= OWNER PORTAL ========================= -->
+    <section class="page" id="page-owner">
+
+      <div id="ownerLoginView">
+
+        <div class="login-box glass card">
+          <div class="login-icon">👤</div>
+          <h2 class="bebas" style="font-size:38px;margin:0">OWNER PORTAL</h2>
+          <p class="muted small">
+            Sign in with your league team and password.
+          </p>
+
+          <form id="ownerLoginForm">
+            <div class="field" style="margin-top:15px">
+              <label>Team</label>
+              <select id="ownerTeamLogin" required></select>
+            </div>
+
+            <div class="field" style="margin-top:12px">
+              <label>Password</label>
+              <input id="ownerPassword" type="password" required placeholder="Default: RMNFL2026">
+            </div>
+
+            <button class="btn btn-red" style="width:100%;margin-top:15px" type="submit">
+              Sign In
+            </button>
+          </form>
+
+          <p class="muted" style="font-size:10px;margin-top:14px">
+            Demo owner password: RMNFL2026
+          </p>
+        </div>
+
+      </div>
+
+      <div id="ownerPortalView" class="hidden"></div>
+
+    </section>
+
+
+    <!-- ========================= MADDEN ========================= -->
+    <section class="page" id="page-madden">
+
+      <div class="section-title">
+        <h2>Madden Sync</h2>
+        <span>Companion App league integration</span>
+      </div>
+
+      <div class="glass card">
+        <div class="card-title">
+          <h3>Companion App URL</h3>
+          <span class="pill pill-green" id="maddenStatusPill">SYNCED</span>
+        </div>
+
+        <p class="muted small">
+          This is the URL owners paste into the Madden Companion App to join the league.
+          It is not a text code.
+        </p>
+
+        <div class="url-row" style="margin-top:12px">
+          <input id="companionUrl" readonly>
+          <button class="btn copy-btn" data-copy-input="companionUrl">Copy</button>
+          <button class="btn btn-red" id="openCompanionBtn">Open</button>
+        </div>
+      </div>
+
+      <div class="grid three-grid" style="margin-top:15px">
+
+        <div class="glass stat-card">
+          <div class="stat-label">Last Synced</div>
+          <div class="stat-value" style="font-size:22px" id="lastSynced">Never</div>
+        </div>
+
+        <div class="glass stat-card">
+          <div class="stat-label">Games Synced</div>
+          <div class="stat-value" id="gamesSynced">0</div>
+        </div>
+
+        <div class="glass stat-card">
+          <div class="stat-label">Sync Status</div>
+          <div class="stat-value" style="font-size:22px;color:#86efac" id="syncStatus">SYNCED</div>
+        </div>
+
+      </div>
+
+      <div class="grid two-grid">
+
+        <div class="glass card">
+          <div class="card-title">
+            <h3>How To Sync</h3>
+          </div>
+
+          <ol class="muted small" style="line-height:2">
+            <li>Download the Madden Companion App.</li>
+            <li>Open the app.</li>
+            <li>Tap <strong>Join League</strong>.</li>
+            <li>Paste the RMNFL Companion App URL.</li>
+            <li>Sync after every completed game.</li>
+          </ol>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title">
+            <h3>Manual Score Entry</h3>
+          </div>
+
+          <form id="manualMaddenForm">
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Week</label>
+                <select id="manualWeek"></select>
+              </div>
+
+              <div class="field">
+                <label>Game</label>
+                <select id="manualGame"></select>
+              </div>
+
+              <div class="field">
+                <label>Home Score</label>
+                <input id="manualHomeScore" type="number" min="0" required>
+              </div>
+
+              <div class="field">
+                <label>Away Score</label>
+                <input id="manualAwayScore" type="number" min="0" required>
+              </div>
+
+            </div>
+
+            <button class="btn btn-red" style="margin-top:12px" type="submit">
+              Submit Manual Score
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="section-title">
+        <h2>Sync Log</h2>
+      </div>
+
+      <div class="glass card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Games Updated</th>
+              </tr>
+            </thead>
+            <tbody id="syncLogTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================= DISCORD ========================= -->
+    <section class="page" id="page-discord">
+
+      <div class="section-title">
+        <h2>RMNFL Discord</h2>
+        <span>League communication center</span>
+      </div>
+
+      <div class="glass card">
+        <div class="card-title">
+          <h3>Official Discord Server</h3>
+        </div>
+
+        <div class="url-row">
+          <input id="discordUrl" readonly>
+          <button class="btn copy-btn" data-copy-input="discordUrl">Copy</button>
+          <button class="btn btn-red" id="openDiscordBtn">Open</button>
+        </div>
+
+        <div style="margin-top:12px">
+          <a href="#" id="discordJoinButton" class="big-link" target="_blank" rel="noopener">
+            💬 JOIN RMNFL DISCORD SERVER
+          </a>
+        </div>
+      </div>
+
+      <div class="grid two-grid">
+
+        <div class="glass card">
+          <div class="card-title">
+            <h3>Channel Map</h3>
+          </div>
+
+          <div class="channel-map">
+            <div class="channel">📣 <strong>announcements</strong></div>
+            <div class="channel">📋 <strong>rules</strong></div>
+            <div class="channel">🏈 <strong>scores</strong></div>
+            <div class="channel">💬 <strong>general</strong></div>
+            <div class="channel">⚡ <strong>discipline</strong></div>
+            <div class="channel">🎥 <strong>media</strong></div>
+            <div class="channel">🏆 <strong>playoffs</strong></div>
+            <div class="channel">📅 <strong>scheduling</strong></div>
+            <div class="channel">🔊 <strong>voice</strong></div>
+            <div class="channel">🤝 <strong>trades</strong></div>
+          </div>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title">
+            <h3>Roles Guide</h3>
+          </div>
+
+          <div class="role"><span class="role-dot" style="background:#dc2626"></span><strong>Commissioner</strong></div>
+          <div class="role"><span class="role-dot" style="background:#f59e0b"></span><strong>Admin</strong></div>
+          <div class="role"><span class="role-dot" style="background:#3b82f6"></span><strong>Team Owner</strong></div>
+          <div class="role"><span class="role-dot" style="background:#94a3b8"></span><strong>Prospect</strong></div>
+          <div class="role"><span class="role-dot" style="background:#000"></span><strong>Suspended</strong></div>
+        </div>
+
+      </div>
+
+      <div class="glass card">
+        <div class="card-title">
+          <h3>Notification Settings</h3>
+        </div>
+
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+          Game scheduling reminders
+          <input type="checkbox" id="notifySchedule" checked style="width:auto">
+        </label>
+
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+          Score updates
+          <input type="checkbox" id="notifyScores" checked style="width:auto">
+        </label>
+
+        <label style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+          League announcements
+          <input type="checkbox" id="notifyAnnouncements" checked style="width:auto">
+        </label>
+      </div>
+
+    </section>
+
+
+    <!-- ========================= ADMIN ========================= -->
+    <section class="page" id="page-admin">
+
+      <div id="adminLockView">
+
+        <div class="admin-lock glass card">
+          <div class="login-icon">🔐</div>
+          <h2 class="bebas" style="font-size:38px;margin:0">ADMIN ACCESS</h2>
+          <p class="muted small">Enter the league administration PIN.</p>
+
+          <form id="adminLoginForm">
+            <div class="field" style="margin-top:15px">
+              <label>Admin PIN</label>
+              <input id="adminPin" type="password" inputmode="numeric" required>
+            </div>
+
+            <button class="btn btn-red" style="width:100%;margin-top:12px">
+              Unlock Admin Portal
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <div id="adminPanel" class="hidden">
+
+        <div class="section-title">
+          <h2>League Administration</h2>
+          <button class="btn btn-danger" id="adminLogout">Lock Admin</button>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="glass card">
+          <div class="card-title">
+            <h3>League Settings</h3>
+          </div>
+
+          <form id="settingsForm">
+
+            <div class="form-grid three">
+
+              <div class="field">
+                <label>Season Name</label>
+                <input id="settingSeason">
+              </div>
+
+              <div class="field">
+                <label>Current Week</label>
+                <input id="settingWeek" type="number" min="1" max="19">
+              </div>
+
+              <div class="field">
+                <label>Commissioner Name</label>
+                <input id="settingCommissioner">
+              </div>
+
+              <div class="field">
+                <label>Discord URL</label>
+                <input id="settingDiscord">
+              </div>
+
+              <div class="field">
+                <label>YouTube URL</label>
+                <input id="settingYoutube">
+              </div>
+
+              <div class="field">
+                <label>Companion App URL</label>
+                <input id="settingCompanion">
+              </div>
+
+            </div>
+
+            <button class="btn btn-red" style="margin-top:15px" type="submit">
+              Save League Settings
+            </button>
+
+          </form>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>Manage Announcements</h3>
+          </div>
+
+          <form id="announcementForm">
+            <div class="form-grid">
+              <div class="field">
+                <label>Announcement Title</label>
+                <input id="announcementTitle" required>
+              </div>
+
+              <div class="field">
+                <label>Announcement Text</label>
+                <input id="announcementText" required>
+              </div>
+            </div>
+
+            <button class="btn btn-red" style="margin-top:12px">
+              Add Announcement
+            </button>
+          </form>
+
+          <div id="adminAnnouncements" style="margin-top:15px"></div>
+        </div>
+
+        <!-- TEAMS -->
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>Manage Teams</h3>
+          </div>
+
+          <form id="teamForm">
+            <div class="form-grid three">
+
+              <div class="field">
+                <label>Team Name</label>
+                <input id="newTeamName" required>
+              </div>
+
+              <div class="field">
+                <label>Owner</label>
+                <input id="newTeamOwner" required>
+              </div>
+
+              <div class="field">
+                <label>Conference</label>
+                <select id="newTeamConference">
+                  <option>AFC</option>
+                  <option>NFC</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Division</label>
+                <select id="newTeamDivision">
+                  <option>East</option>
+                  <option>North</option>
+                  <option>South</option>
+                  <option>West</option>
+                </select>
+              </div>
+
+            </div>
+
+            <button class="btn btn-red" style="margin-top:12px">
+              Add Team
+            </button>
+          </form>
+
+          <div style="margin-top:15px" class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Owner</th>
+                  <th>Conference</th>
+                  <th>Division</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminTeamsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>Manage Schedule / Results</h3>
+          </div>
+
+          <div class="field" style="max-width:300px;margin-bottom:12px">
+            <label>Schedule Week</label>
+            <select id="adminScheduleWeek"></select>
+          </div>
+
+          <div id="adminScheduleGames"></div>
+        </div>
+
+        <!-- DISCIPLINE -->
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>Discipline Log</h3>
+          </div>
+
+          <form id="disciplineForm">
+
+            <div class="form-grid three">
+
+              <div class="field">
+                <label>Team</label>
+                <select id="disciplineTeam" required></select>
+              </div>
+
+              <div class="field">
+                <label>Reason</label>
+                <input id="disciplineReason" required>
+              </div>
+
+              <div class="field">
+                <label>Fine Amount</label>
+                <input id="disciplineAmount" type="number" min="0" required>
+              </div>
+
+              <div class="field">
+                <label>Suspension Games</label>
+                <input id="disciplineSuspension" type="number" min="0" value="0">
+              </div>
+
+            </div>
+
+            <button class="btn btn-red" style="margin-top:12px">
+              Add Discipline Record
+            </button>
+
+          </form>
+
+          <div class="table-wrap" style="margin-top:15px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Team</th>
+                  <th>Reason</th>
+                  <th>Fine</th>
+                  <th>Suspension</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="disciplineTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SAVE -->
+        <div class="glass card" style="margin-top:15px">
+          <button class="btn btn-red" style="width:100%;padding:14px" id="saveAllSettings">
+            💾 SAVE ALL SETTINGS
+          </button>
+        </div>
+
+        <!-- DATA -->
+        <div class="glass card danger-zone" style="margin-top:15px">
+          <div class="card-title">
+            <h3>Data Management</h3>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-gold" id="exportData">Export League Data</button>
+            <button class="btn" id="importData">Import League Data</button>
+            <button class="btn btn-danger" id="resetData">Reset League Data</button>
+          </div>
+
+          <input type="file" id="importFile" accept=".json" class="hidden">
+        </div>
+
+      </div>
+
+    </section>
+
+    <div class="footer">
+      RMNFL League Platform • Season 2026 • LocalStorage Edition<br>
+      All league data is stored locally in this browser.
+    </div>
+
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+  /*
+   * ================================================================
+   * RMNFL LEAGUE PLATFORM
+   * Single-file GitHub Pages application
+   * No backend / no Node / no AppSDK
+   * ================================================================
+   */
+
+  (function () {
+    "use strict";
+
+    /* ==============================================================
+       CONSTANTS
+       ============================================================== */
+
+    const STORAGE_KEY = "rnmfl_league_platform_v3";
+    const ADMIN_PIN = "RMNFL2024";
+    const OWNER_PASSWORD = "RMNFL2026";
+
+    const TEAM_DATA = [
+      ["Arizona Cardinals","NFC","West"],
+      ["Atlanta Falcons","NFC","South"],
+      ["Baltimore Ravens","AFC","North"],
+      ["Buffalo Bills","AFC","East"],
+      ["Carolina Panthers","NFC","South"],
+      ["Chicago Bears","NFC","North"],
+      ["Cincinnati Bengals","AFC","North"],
+      ["Cleveland Browns","AFC","North"],
+      ["Dallas Cowboys","NFC","East"],
+      ["Denver Broncos","AFC","West"],
+      ["Detroit Lions","NFC","North"],
+      ["Green Bay Packers","NFC","North"],
+      ["Houston Texans","AFC","South"],
+      ["Indianapolis Colts","AFC","South"],
+      ["Jacksonville Jaguars","AFC","South"],
+      ["Kansas City Chiefs","AFC","West"],
+      ["Las Vegas Raiders","AFC","West"],
+      ["Los Angeles Chargers","AFC","West"],
+      ["Los Angeles Rams","NFC","West"],
+      ["Miami Dolphins","AFC","East"],
+      ["Minnesota Vikings","NFC","North"],
+      ["New England Patriots","AFC","East"],
+      ["New Orleans Saints","NFC","South"],
+      ["New York Giants","NFC","East"],
+      ["New York Jets","AFC","East"],
+      ["Philadelphia Eagles","NFC","East"],
+      ["Pittsburgh Steelers","AFC","North"],
+      ["San Francisco 49ers","NFC","West"],
+      ["Seattle Seahawks","NFC","West"],
+      ["Tampa Bay Buccaneers","NFC","South"],
+      ["Tennessee Titans","AFC","South"],
+      ["Washington Commanders","NFC","East"]
+    ];
+
+    const OWNER_NAMES = [
+      "Musah Abdul-Aziz",
+      "Zac Johnson",
+      "Jordan Williams",
+      "Marcus Reed",
+      "Darius Brown",
+      "Chris Taylor",
+      "Anthony Davis",
+      "Malik Jackson",
+      "Jalen Smith",
+      "DeAndre Wilson",
+      "Trevor Brooks",
+      "Kevin Carter",
+      "Andre Mitchell",
+      "Brandon Harris",
+      "Cameron Lewis",
+      "Isaiah Thomas"
+    ];
+
+    const FIRST_NAMES = [
+      "Marcus","Jordan","Darius","Malik","Jalen","DeAndre","Trevor",
+      "Cameron","Isaiah","Xavier","Jayden","Damien","Andre","Chris",
+      "Brandon","Khalil","Anthony","Tyler","Justin","Devon","Micah",
+      "Javon","Travis","Derrick","Ryan","Jason","Caleb","Dylan"
+    ];
+
+    const LAST_NAMES = [
+      "Williams","Johnson","Brown","Davis","Wilson","Jackson","Smith",
+      "Thomas","Harris","Taylor","Anderson","Moore","Martin","Clark",
+      "Lewis","Walker","Hall","Allen","Young","King","Wright","Scott",
+      "Green","Baker","Adams","Nelson","Carter","Mitchell"
+    ];
+
+    const POSITIONS = [
+      "QB","RB","WR","WR","WR","TE","OL","OL","OL","OL","OL",
+      "DL","DL","DL","DL","LB","LB","LB","CB","CB","CB","CB",
+      "S","S","S","K","P"
+    ];
+
+    const DEPTH_GROUPS = {
+      QB: 3,
+      RB: 4,
+      WR: 7,
+      TE: 4,
+      OL: 10,
+      DL: 8,
+      LB: 6,
+      CB: 6,
+      S: 4,
+      K: 1,
+      P: 1
+    };
+
+    /* ==============================================================
+       HELPERS
+       ============================================================== */
+
+    function uid(prefix) {
+      return prefix + "_" + Date.now() + "_" + Math.random().toString(36).slice(2,8);
+    }
+
+    function esc(value) {
+      return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
+
+    function money(value) {
+      return "$" + Number(value || 0).toLocaleString();
+    }
+
+    function nowText() {
+      return new Date().toLocaleString();
+    }
+
+    function dateText(offsetDays = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d.toLocaleDateString();
+    }
+
+    function randomFrom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function teamById(id) {
+      return state.teams.find(t => t.id === id);
+    }
+
+    function teamByName(name) {
+      return state.teams.find(t => t.name === name);
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        toast("Could not save data to localStorage.", "error");
+      }
+    }
+
+    function toast(message, type = "success") {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+
+      const el = document.createElement("div");
+      el.className = "toast " + type;
+      el.textContent = message;
+      container.appendChild(el);
+
+      setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(8px)";
+        setTimeout(() => el.remove(), 250);
+      }, 3000);
+    }
+
+    function validUrl(url) {
+      if (!url) return false;
+      try {
+        const parsed = new URL(url);
+        return parsed.protocol === "http:" || parsed.protocol === "https:";
+      } catch {
+        return false;
+      }
+    }
+
+    function copyText(text) {
+      if (!text) {
+        toast("Nothing to copy.", "error");
+        return;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => toast("Copied to clipboard."))
+          .catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const input = document.createElement("textarea");
+      input.value = text;
+      document.body.appendChild(input);
+      input.select();
+
+      try {
+        document.execCommand("copy");
+        toast("Copied to clipboard.");
+      } catch {
+        toast("Copy failed. Please copy manually.", "error");
+      }
+
+      input.remove();
+    }
+
+    function openUrl(url) {
+      if (!validUrl(url)) {
+        toast("Please configure a valid URL in Admin.", "error");
+        return;
+      }
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    /* ==============================================================
+       DATA CREATION
+       ============================================================== */
+
+    function createDefaultState() {
+
+      const teams = TEAM_DATA.map((data, index) => ({
+        id: "team_" + (index + 1),
+        name: data[0],
+        conference: data[1],
+        division: data[2],
+        owner: OWNER_NAMES[index % OWNER_NAMES.length],
+        password: OWNER_PASSWORD
+      }));
+
+      const standings = teams.map((team, index) => {
+        const wins = Math.max(0, 12 - (index % 8));
+        const losses = Math.min(18, 2 + (index % 7));
+
+        return {
+          teamId: team.id,
+          w: wins,
+          l: losses,
+          t: 0,
+          pf: 0,
+          pa: 0,
+          streak: index % 3 === 0 ? "W3" : index % 3 === 1 ? "W1" : "L1"
+        };
+      });
+
+      const schedule = createScheduleSkeleton(teams);
+
+      return {
+        version: 3,
+
+        settings: {
+          season: "2026",
+          seasonName: "Season 2026",
+          currentWeek: 1,
+          commissioner: "RMNFL Commissioner",
+          discordUrl: "https://discord.gg/",
+          youtubeUrl: "https://youtube.com/",
+          companionUrl: "https://example.com/rmnfl-madden"
+        },
+
+        teams,
+
+        standings,
+
+        schedule,
+
+        rosters: {},
+
+        trades: [],
+
+        announcements: [
+          {
+            id: uid("ann"),
+            title: "Welcome to RMNFL Season 2026",
+            text: "The new season is officially underway. Check your schedule and get your Week 1 games scheduled.",
+            date: nowText()
+          },
+          {
+            id: uid("ann"),
+            title: "48-Hour Scheduling Window",
+            text: "Owners must make contact with their opponent within 48 hours of a matchup being posted.",
+            date: nowText()
+          },
+          {
+            id: uid("ann"),
+            title: "Madden Sync",
+            text: "Sync your league results after each completed game whenever possible.",
+            date: nowText()
+          }
+        ],
+
+        discipline: [],
+
+        syncLog: [],
+
+        highlights: [
+          {
+            title: "RMNFL Season Opener",
+            description: "Season 2026 officially begins.",
+            date: dateText(-1)
+          },
+          {
+            title: "Commissioner Announcement",
+            description: "New season rules and scheduling windows released.",
+            date: dateText(-2)
+          }
+        ],
+
+        streamSchedule: [
+          {
+            title: "RMNFL Primetime",
+            date: "Friday • 8:00 PM"
+          },
+          {
+            title: "Sunday Showcase",
+            date: "Sunday • 7:00 PM"
+          },
+          {
+            title: "Playoff Watch",
+            date: "TBD"
+          }
+        ],
+
+        notificationSettings: {
+          schedule: true,
+          scores: true,
+          announcements: true
+        }
+      };
+    }
+
+    function createScheduleSkeleton(teams) {
+      const schedule = [];
+
+      /*
+       * A deterministic rotating schedule skeleton.
+       * Every week contains 16 games.
+       * Week 1 starts with teams 1-32 paired sequentially.
+       */
+
+      for (let week = 1; week <= 18; week++) {
+
+        const pairs = [];
+
+        for (let i = 0; i < 16; i++) {
+          const awayIndex = (i + week - 1) % 16;
+          const homeIndex = 31 - ((i + week - 1) % 16);
+
+          let away = teams[awayIndex];
+          let home = teams[homeIndex];
+
+          if (week % 2 === 0) {
+            const temp = away;
+            away = home;
+            home = temp;
+          }
+
+          pairs.push({
+            id: uid("game"),
+            week,
+            awayTeamId: away.id,
+            homeTeamId: home.id,
+            date: "Week " + week,
+            time: "TBD",
+            status: "Scheduled",
+            awayScore: null,
+            homeScore: null
+          });
+        }
+
+        schedule.push(...pairs);
+      }
+
+      return schedule;
+    }
+
+    function createRoster(team) {
+
+      const players = [];
+      let number = 0;
+
+      Object.entries(DEPTH_GROUPS).forEach(([position, count]) => {
+
+        for (let i = 0; i < count; i++) {
+
+          number++;
+
+          const first = FIRST_NAMES[(number + team.name.length) % FIRST_NAMES.length];
+          const last = LAST_NAMES[(number * 3 + team.name.length) % LAST_NAMES.length];
+
+          const baseOvr =
+            position === "QB" ? 78 :
+            position === "WR" ? 76 :
+            position === "CB" ? 75 :
+            position === "RB" ? 77 :
+            position === "TE" ? 74 :
+            position === "DL" ? 75 :
+            position === "LB" ? 74 :
+            position === "S" ? 75 :
+            position === "OL" ? 76 :
+            position === "K" || position === "P" ? 72 : 73;
+
+          const variation = ((number * 7 + team.name.length) % 13) - 6;
+
+          players.push({
+            id: uid("player"),
+            number: number <= 99 ? number : number % 99,
+            name: first + " " + last,
+            position,
+            ovr: Math.max(60, Math.min(99, baseOvr + variation)),
+            age: 21 + ((number + team.name.length) % 13),
+            speed: 78 + ((number * 3 + team.name.length) % 20)
+          });
+        }
+      });
+
+      /*
+       * Ensure exactly 53 players.
+       */
+      while (players.length < 53) {
+        const n = players.length + 1;
+        players.push({
+          id: uid("player"),
+          number: n,
+          name: FIRST_NAMES[n % FIRST_NAMES.length] + " " + LAST_NAMES[(n * 2) % LAST_NAMES.length],
+          position: "LB",
+          ovr: 70 + (n % 12),
+          age: 22 + (n % 10),
+          speed: 80 + (n % 17)
+        });
+      }
+
+      return players.slice(0, 53);
+    }
+
+    /* ==============================================================
+       LOAD STATE
+       ============================================================== */
+
+    let state;
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (saved) {
+        state = JSON.parse(saved);
+      } else {
+        state = createDefaultState();
+        saveState();
+      }
+
+    } catch (e) {
+      console.warn("Could not load localStorage. Starting clean.", e);
+      state = createDefaultState();
+    }
+
+    /* Make sure older/corrupt state does not break the app. */
+    function normalizeState() {
+
+      if (!state || typeof state !== "object") {
+        state = createDefaultState();
+      }
+
+      state.settings = state.settings || {};
+      state.settings.season = state.settings.season || "2026";
+      state.settings.seasonName = state.settings.seasonName || "Season 2026";
+      state.settings.currentWeek = Number(state.settings.currentWeek || 1);
+      state.settings.commissioner = state.settings.commissioner || "RMNFL Commissioner";
+      state.settings.discordUrl = state.settings.discordUrl || "https://discord.gg/";
+      state.settings.youtubeUrl = state.settings.youtubeUrl || "https://youtube.com/";
+      state.settings.companionUrl = state.settings.companionUrl || "https://example.com/rmnfl-madden";
+
+      state.teams = Array.isArray(state.teams) ? state.teams : [];
+      state.standings = Array.isArray(state.standings) ? state.standings : [];
+      state.schedule = Array.isArray(state.schedule) ? state.schedule : [];
+      state.rosters = state.rosters || {};
+      state.trades = Array.isArray(state.trades) ? state.trades : [];
+      state.announcements = Array.isArray(state.announcements) ? state.announcements : [];
+      state.discipline = Array.isArray(state.discipline) ? state.discipline : [];
+      state.syncLog = Array.isArray(state.syncLog) ? state.syncLog : [];
+      state.highlights = Array.isArray(state.highlights) ? state.highlights : [];
+      state.streamSchedule = Array.isArray(state.streamSchedule) ? state.streamSchedule : [];
+
+      if (state.teams.length === 0) {
+        state = createDefaultState();
+      }
+
+      saveState();
+    }
+
+    normalizeState();
+
+    /* ==============================================================
+       VIEW ROUTING
+       ============================================================== */
+
+    let currentView = "home";
+    let scheduleWeek = state.settings.currentWeek || 1;
+    let scoreWeek = state.settings.currentWeek || 1;
+    let rosterTeamId = state.teams[0]?.id || "";
+    let standingsSort = {
+      field: "w",
+      direction: "desc"
+    };
+
+    function showView(view) {
+
+      currentView = view;
+
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+
+      const target = document.getElementById("page-" + view);
+
+      if (target) {
+        target.classList.add("active");
+      }
+
+      document.querySelectorAll("#mainNav button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === view);
+      });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+      renderCurrentView();
+    }
+
+    document.querySelectorAll("#mainNav button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        showView(btn.dataset.view);
+      });
+    });
+
+    function renderCurrentView() {
+
+      renderHome();
+
+      if (currentView === "standings") renderStandings();
+      if (currentView === "schedule") renderSchedule();
+      if (currentView === "scores") renderScores();
+      if (currentView === "rosters") renderRosters();
+      if (currentView === "tradeblock") renderTradeBlock();
+      if (currentView === "media") renderMedia();
+      if (currentView === "owner") renderOwnerPortal();
+      if (currentView === "madden") renderMadden();
+      if (currentView === "discord") renderDiscord();
+      if (currentView === "admin") renderAdmin();
+
+      populateGlobalSelects();
+    }
+
+    /* ==============================================================
+       HOME
+       ============================================================== */
+
+    function renderHome() {
+
+      const settings = state.settings;
+
+      document.getElementById("heroSeason").textContent =
+        "SEASON " + settings.season;
+
+      document.getElementById("homeWeekStat").textContent =
+        settings.currentWeek;
+
+      const completed = state.schedule.filter(g => g.status === "Final").length;
+
+      document.getElementById("homeGamesPlayed").textContent = completed;
+
+      document.getElementById("homeTrades").textContent =
+        state.trades.length;
+
+      const tickerItems = state.announcements.map(a => a.title);
+      document.getElementById("newsTicker").textContent =
+        (tickerItems.length ? tickerItems.join(" • ") + " • " : "") +
+        "RMNFL Season " + settings.season +
+        " • Play hard. Compete fairly. Respect the league. • " +
+        tickerItems.join(" • ");
+
+      renderRecentScores();
+      renderUpcomingGames();
+      renderHomeAnnouncements();
+    }
+
+    function renderRecentScores() {
+
+      const el = document.getElementById("recentScores");
+
+      const finals = state.schedule
+        .filter(g => g.status === "Final")
+        .slice(-5)
+        .reverse();
+
+      if (!finals.length) {
+        el.innerHTML = '<div class="empty">No completed games yet.</div>';
+        return;
+      }
+
+      el.innerHTML = finals.map(g => {
+        const away = teamById(g.awayTeamId);
+        const home = teamById(g.homeTeamId);
+
+        return `
+          <div class="score-row">
+            <div>
+              <div class="team-name">${esc(away?.name)}</div>
+              <div class="muted small">${esc(home?.name)}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="score">${g.awayScore} - ${g.homeScore}</div>
+              <div class="final">Final</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderUpcomingGames() {
+
+      const el = document.getElementById("upcomingGames");
+
+      const games = state.schedule
+        .filter(g => g.status !== "Final")
+        .slice(0,5);
+
+      if (!games.length) {
+        el.innerHTML = '<div class="empty">No upcoming games.</div>';
+        return;
+      }
+
+      el.innerHTML = games.map(g => {
+
+        const away = teamById(g.awayTeamId);
+        const home = teamById(g.homeTeamId);
+
+        return `
+          <div class="score-row">
+            <div>
+              <div class="team-name">${esc(away?.name)}</div>
+              <div class="muted small">@ ${esc(home?.name)}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="small">Week ${g.week}</div>
+              <div class="muted small">${esc(g.time)}</div>
+            </div>
+          </div>
+        `;
+
+      }).join("");
+    }
+
+    function renderHomeAnnouncements() {
+
+      const el = document.getElementById("homeAnnouncements");
+
+      if (!state.announcements.length) {
+        el.innerHTML = '<div class="empty">No announcements.</div>';
+        return;
+      }
+
+      el.innerHTML = state.announcements.slice(0,8).map(a => `
+        <div class="announcement">
+          <strong>${esc(a.title)}</strong>
+          <div class="small">${esc(a.text)}</div>
+          <small>${esc(a.date)}</small>
+        </div>
+      `).join("");
+    }
+
+    /* ==============================================================
+       STANDINGS
+       ============================================================== */
+
+    function renderStandings() {
+
+      const container = document.getElementById("standingsContent");
+
+      const conferences = ["AFC","NFC"];
+      const divisions = ["East","North","South","West"];
+
+      let html = "";
+
+      conferences.forEach(conf => {
+
+        html += `<div class="conference-title">${conf}</div>`;
+
+        divisions.forEach(div => {
+
+          const rows = state.teams
+            .filter(t => t.conference === conf && t.division === div)
+            .map(team => {
+
+              const standing = state.standings.find(s => s.teamId === team.id) || {
+                w:0,l:0,t:0,pf:0,pa:0,streak:"—"
+              };
+
+              return {
+                team,
+                ...standing
+              };
+            });
+
+          rows.sort((a,b) => {
+
+            let av = a[standingsSort.field];
+            let bv = b[standingsSort.field];
+
+            if (standingsSort.field === "team") {
+              av = a.team.name;
+              bv = b.team.name;
+            }
+
+            if (typeof av === "string") {
+              return standingsSort.direction === "asc"
+                ? av.localeCompare(bv)
+                : bv.localeCompare(av);
+            }
+
+            return standingsSort.direction === "asc"
+              ? av - bv
+              : bv - av;
+          });
+
+          html += `
+            <div class="division glass">
+              <div class="division-header">
+                ${conf} ${div}
+              </div>
+
+              <div class="table-wrap" style="border:0">
+                <table>
+                  <thead>
+                    <tr>
+                      ${sortableHeader("Rank","rank")}
+                      ${sortableHeader("Team Name","team")}
+                      ${sortableHeader("Owner","owner")}
+                      ${sortableHeader("W","w")}
+                      ${sortableHeader("L","l")}
+                      ${sortableHeader("T","t")}
+                      ${sortableHeader("PF","pf")}
+                      ${sortableHeader("PA","pa")}
+                      ${sortableHeader("Streak","streak")}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    ${rows.map((row,index) => {
+
+                      const rank = index + 1;
+
+                      return `
+                        <tr>
+                          <td>${rank}</td>
+                          <td><strong>${esc(row.team.name)}</strong></td>
+                          <td>${esc(row.team.owner)}</td>
+                          <td><strong>${row.w}</strong></td>
+                          <td>${row.l}</td>
+                          <td>${row.t}</td>
+                          <td>${row.pf}</td>
+                          <td>${row.pa}</td>
+                          <td>
+                            <span class="pill ${String(row.streak).startsWith("W") ? "pill-green" : "pill-red"}">
+                              ${esc(row.streak)}
+                            </span>
+                          </td>
+                        </tr>
+                      `;
+
+                    }).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        });
+      });
+
+      container.innerHTML = html;
+
+      container.querySelectorAll("[data-sort]").forEach(th => {
+        th.addEventListener("click", () => {
+
+          const field = th.dataset.sort;
+
+          if (standingsSort.field === field) {
+            standingsSort.direction =
+              standingsSort.direction === "asc" ? "desc" : "asc";
+          } else {
+            standingsSort.field = field;
+            standingsSort.direction = "desc";
+          }
+
+          renderStandings();
+        });
+      });
+    }
+
+    function sortableHeader(label, field) {
+      return `
+        <th data-sort="${field}">
+          ${label}
+          ${standingsSort.field === field
+            ? standingsSort.direction === "asc" ? " ▲" : " ▼"
+            : ""}
+        </th>
+      `;
+    }
+
+    /* ==============================================================
+       SCHEDULE
+       ============================================================== */
+
+    function renderWeekButtons() {
+
+      const selector = document.getElementById("weekSelector");
+
+      let html = "";
+
+      for (let week = 1; week <= 18; week++) {
+        html += `
+          <button class="week-btn ${scheduleWeek === week ? "active" : ""}"
+                  data-week="${week}">
+            Week ${week}
+          </button>
+        `;
+      }
+
+      html += `
+        <button class="week-btn ${scheduleWeek === 19 ? "active" : ""}"
+                data-week="19">
+          Playoffs
+        </button>
+      `;
+
+      selector.innerHTML = html;
+
+      selector.querySelectorAll(".week-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          scheduleWeek = Number(btn.dataset.week);
+          renderSchedule();
+        });
+      });
+    }
+
+    function renderSchedule() {
+
+      renderWeekButtons();
+
+      document.getElementById("scheduleWeekLabel").textContent =
+        scheduleWeek === 19 ? "Playoffs" : "Week " + scheduleWeek;
+
+      const container = document.getElementById("scheduleGames");
+
+      let games = state.schedule.filter(g => g.week === scheduleWeek);
+
+      if (scheduleWeek === 19) {
+        games = [];
+      }
+
+      if (!games.length) {
+        container.innerHTML = `
+          <div class="glass card empty">
+            ${scheduleWeek === 19
+              ? "Playoff schedule will appear here when configured by the commissioner."
+              : "No games scheduled for this week."}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = games.map(g => {
+
+        const away = teamById(g.awayTeamId);
+        const home = teamById(g.homeTeamId);
+
+        return `
+          <div class="glass game-card">
+
+            <div class="away">
+              <div class="team-name">${esc(away?.name)}</div>
+              <div class="muted small">${esc(away?.owner)}</div>
+            </div>
+
+            <div class="vs">VS</div>
+
+            <div class="home">
+              <div class="team-name">${esc(home?.name)}</div>
+              <div class="muted small">${esc(home?.owner)}</div>
+            </div>
+
+            <div class="game-meta">
+              ${
+                g.status === "Final"
+                ? `<div class="game-final">${g.awayScore} - ${g.homeScore} FINAL</div>`
+                : `<div>${esc(g.date)}</div><div>${esc(g.time)}</div>`
+              }
+            </div>
+
+          </div>
+        `;
+      }).join("");
+    }
+
+    /* ==============================================================
+       SCORES
+       ============================================================== */
+
+    function renderScoreWeekSelect() {
+
+      const select = document.getElementById("scoreWeekSelect");
+
+      select.innerHTML = Array.from({length:18}, (_,i) => {
+        const week = i + 1;
+
+        return `
+          <option value="${week}" ${week === scoreWeek ? "selected" : ""}>
+            Week ${week}
+          </option>
+        `;
+      }).join("");
+
+      select.onchange = () => {
+        scoreWeek = Number(select.value);
+        renderScores();
+      };
+    }
+
+    function renderScores() {
+
+      renderScoreWeekSelect();
+
+      const container = document.getElementById("scoreGames");
+
+      const games = state.schedule.filter(g => g.week === scoreWeek);
+
+      if (!games.length) {
+        container.innerHTML = '<div class="glass card empty">No games scheduled.</div>';
+        return;
+      }
+
+      container.innerHTML = games.map(g => {
+
+        const away = teamById(g.awayTeamId);
+        const home = teamById(g.homeTeamId);
+
+        return `
+          <div class="glass card" style="margin-bottom:10px">
+            <div class="card-title">
+              <h3>${esc(away?.name)} @ ${esc(home?.name)}</h3>
+              ${
+                g.status === "Final"
+                ? '<span class="pill pill-green">FINAL</span>'
+                : '<span class="pill pill-gold">AWAITING SCORE</span>'
+              }
+            </div>
+
+            <div class="form-grid three">
+
+              <div class="field">
+                <label>${esc(away?.name)} — Away Score</label>
+                <input type="number"
+                       min="0"
+                       id="awayScore_${g.id}"
+                       value="${g.awayScore ?? ""}"
+                       ${g.status === "Final" ? "disabled" : ""}>
+              </div>
+
+              <div class="field">
+                <label>${esc(home?.name)} — Home Score</label>
+                <input type="number"
+                       min="0"
+                       id="homeScore_${g.id}"
+                       value="${g.homeScore ?? ""}"
+                       ${g.status === "Final" ? "disabled" : ""}>
+              </div>
+
+              <div style="display:flex;align-items:end">
+                ${
+                  g.status === "Final"
+                  ? `<button class="btn" style="width:100%" disabled>Score Submitted</button>`
+                  : `<button class="btn btn-red score-submit"
+                              style="width:100%"
+                              data-game="${g.id}">
+                       Submit Score
+                     </button>`
+                }
+              </div>
+
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      container.querySelectorAll(".score-submit").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          const game = state.schedule.find(g => g.id === btn.dataset.game);
+
+          if (!game) return;
+
+          const awayInput = document.getElementById("awayScore_" + game.id);
+          const homeInput = document.getElementById("homeScore_" + game.id);
+
+          if (
+            awayInput.value === "" ||
+            homeInput.value === "" ||
+            Number(awayInput.value) < 0 ||
+            Number(homeInput.value) < 0
+          ) {
+            toast("Enter both scores before submitting.", "error");
+            return;
+          }
+
+          game.awayScore = Number(awayInput.value);
+          game.homeScore = Number(homeInput.value);
+          game.status = "Final";
+
+          updateStandingsFromGame(game);
+
+          addSyncLog("Score Report", 1);
+
+          saveState();
+
+          toast("Final score submitted.");
+
+          renderScores();
+          renderHome();
+        });
+      });
+    }
+
+    function updateStandingsFromGame(game) {
+
+      const awayStanding = state.standings.find(s => s.teamId === game.awayTeamId);
+      const homeStanding = state.standings.find(s => s.teamId === game.homeTeamId);
+
+      if (!awayStanding || !homeStanding) return;
+
+      const awayScore = Number(game.awayScore);
+      const homeScore = Number(game.homeScore);
+
+      awayStanding.pf += awayScore;
+      awayStanding.pa += homeScore;
+
+      homeStanding.pf += homeScore;
+      homeStanding.pa += awayScore;
+
+      if (awayScore > homeScore) {
+        awayStanding.w++;
+        homeStanding.l++;
+
+        awayStanding.streak = nextWinStreak(awayStanding.streak);
+        homeStanding.streak = "L1";
+
+      } else if (homeScore > awayScore) {
+
+        homeStanding.w++;
+        awayStanding.l++;
+
+        homeStanding.streak = nextWinStreak(homeStanding.streak);
+        awayStanding.streak = "L1";
+
+      } else {
+
+        awayStanding.t++;
+        homeStanding.t++;
+
+        awayStanding.streak = "T1";
+        homeStanding.streak = "T1";
+      }
+    }
+
+    function nextWinStreak(current) {
+
+      const match = String(current).match(/^W(\d+)$/);
+
+      if (!match) return "W1";
+
+      return "W" + (Number(match[1]) + 1);
+    }
+
+    /* ==============================================================
+       ROSTERS
+       ============================================================== */
+
+    function ensureRoster(teamId) {
+
+      if (!state.rosters[teamId]) {
+        const team = teamById(teamId);
+        state.rosters[teamId] = createRoster(team || {name:"RMNFL"});
+        saveState();
+      }
+
+      return state.rosters[teamId];
+    }
+
+    function renderRosters() {
+
+      const select = document.getElementById("rosterTeamSelect");
+
+      if (!rosterTeamId && state.teams.length) {
+        rosterTeamId = state.teams[0].id;
+      }
+
+      select.value = rosterTeamId;
+
+      const team = teamById(rosterTeamId);
+
+      if (!team) return;
+
+      const roster = ensureRoster(team.id);
+
+      document.getElementById("rosterTeamTitle").textContent =
+        team.name + " — 53-Man Roster";
+
+      document.getElementById("rosterTableBody").innerHTML =
+        roster.map(player => `
+          <tr>
+            <td>${player.number}</td>
+            <td><strong>${esc(player.name)}</strong></td>
+            <td><span class="pos-badge">${esc(player.position)}</span></td>
+            <td class="ovr">${player.ovr}</td>
+            <td>${player.age}</td>
+            <td>${player.speed}</td>
+          </tr>
+        `).join("");
+
+      renderDepthChart(roster);
+    }
+
+    function renderDepthChart(roster) {
+
+      const container = document.getElementById("depthChart");
+
+      const positions = [
+        "QB","RB","WR","TE","OL","DL","LB","CB","S","K","P"
+      ];
+
+      container.innerHTML = positions.map(pos => {
+
+        const players = roster
+          .filter(p => p.position === pos)
+          .sort((a,b) => b.ovr - a.ovr)
+          .slice(0,4);
+
+        return `
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-weight:900;font-size:11px;margin-bottom:6px">${pos}</div>
+
+            ${
+              players.length
+              ? players.map((p,i) => `
+                <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:11px">
+                  <span>${i+1}. ${esc(p.name)}</span>
+                  <strong style="color:var(--gold)">${p.ovr}</strong>
+                </div>
+              `).join("")
+              : '<div class="muted small">No players</div>'
+            }
+
+          </div>
+        `;
+      }).join("");
+    }
+
+    /* ==============================================================
+       TRADE BLOCK
+       ============================================================== */
+
+    function renderTradeBlock() {
+
+      const container = document.getElementById("tradeBlockCards");
+
+      if (!state.trades.length) {
+        container.innerHTML = `
+          <div class="glass card empty" style="grid-column:1/-1">
+            No players currently listed on the Trade Block.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = state.trades.map(trade => `
+        <div class="glass trade-card">
+
+          <div class="trade-ovr">${trade.ovr}</div>
+
+          <div class="muted small">
+            ${esc(trade.team)}
+          </div>
+
+          <div class="trade-player">
+            ${esc(trade.player)}
+          </div>
+
+          <div style="margin-top:6px">
+            <span class="pos-badge">${esc(trade.position)}</span>
+          </div>
+
+          <div class="muted small" style="margin-top:12px">
+            Owner: ${esc(trade.owner)}
+          </div>
+
+          <div style="margin-top:8px">
+            <strong>Asking:</strong>
+            <span class="muted small">${esc(trade.notes)}</span>
+          </div>
+
+          <button class="btn btn-danger" style="margin-top:12px"
+                  data-delete-trade="${trade.id}">
+            Remove
+          </button>
+
+        </div>
+      `).join("");
+
+      container.querySelectorAll("[data-delete-trade]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          state.trades = state.trades.filter(
+            t => t.id !== btn.dataset.deleteTrade
+          );
+
+          saveState();
+
+          toast("Trade block entry removed.");
+
+          renderTradeBlock();
+          renderHome();
+        });
+
+      });
+    }
+
+    document.getElementById("tradeForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const owner = document.getElementById("tradeOwner").value.trim();
+      const team = document.getElementById("tradeTeam").value;
+      const player = document.getElementById("tradePlayer").value.trim();
+      const position = document.getElementById("tradePosition").value;
+      const ovr = Number(document.getElementById("tradeOvr").value);
+      const notes = document.getElementById("tradeNotes").value.trim();
+
+      if (!owner || !team || !player || !position || !notes || !Number.isFinite(ovr)) {
+        toast("Complete all Trade Block fields.", "error");
+        return;
+      }
+
+      state.trades.unshift({
+        id: uid("trade"),
+        owner,
+        team,
+        player,
+        position,
+        ovr,
+        notes,
+        date: nowText()
+      });
+
+      saveState();
+
+      this.reset();
+
+      toast("Player added to the Trade Block.");
+
+      renderTradeBlock();
+      renderHome();
+    });
+
+    /* ==============================================================
+       MEDIA
+       ============================================================== */
+
+    function renderMedia() {
+
+      document.getElementById("mediaYoutubeUrl").value =
+        state.settings.youtubeUrl;
+
+      document.getElementById("highlightsList").innerHTML =
+        state.highlights.length
+        ? state.highlights.map(h => `
+          <div class="score-row">
+            <div>
+              <strong>${esc(h.title)}</strong>
+              <div class="muted small">${esc(h.description)}</div>
+            </div>
+            <div class="muted small">${esc(h.date)}</div>
+          </div>
+        `).join("")
+        : '<div class="empty">No highlights yet.</div>';
+
+      document.getElementById("streamSchedule").innerHTML =
+        state.streamSchedule.length
+        ? state.streamSchedule.map(s => `
+          <div class="score-row">
+            <strong>${esc(s.title)}</strong>
+            <span class="muted small">${esc(s.date)}</span>
+          </div>
+        `).join("")
+        : '<div class="empty">No streams scheduled.</div>';
+    }
+
+    document.getElementById("openYoutubeBtn").addEventListener("click", () => {
+      openUrl(state.settings.youtubeUrl);
+    });
+
+    /* ==============================================================
+       OWNER PORTAL
+       ============================================================== */
+
+    let loggedOwnerTeamId = null;
+
+    function renderOwnerPortal() {
+
+      if (!loggedOwnerTeamId) {
+        document.getElementById("ownerLoginView").classList.remove("hidden");
+        document.getElementById("ownerPortalView").classList.add("hidden");
+        return;
+      }
+
+      const team = teamById(loggedOwnerTeamId);
+
+      if (!team) {
+        loggedOwnerTeamId = null;
+        renderOwnerPortal();
+        return;
+      }
+
+      document.getElementById("ownerLoginView").classList.add("hidden");
+      document.getElementById("ownerPortalView").classList.remove("hidden");
+
+      const standing =
+        state.standings.find(s => s.teamId === team.id) ||
+        {w:0,l:0,t:0,pf:0,pa:0,streak:"—"};
+
+      const roster = ensureRoster(team.id);
+
+      const schedule = state.schedule.filter(
+        g => g.awayTeamId === team.id || g.homeTeamId === team.id
+      );
+
+      const trades = state.trades.filter(
+        t => t.team === team.name || t.owner === team.owner
+      );
+
+      const upcoming = schedule
+        .filter(g => g.status !== "Final")
+        .slice(0,5);
+
+      const completed = schedule
+        .filter(g => g.status === "Final")
+        .slice(0,5);
+
+      document.getElementById("ownerPortalView").innerHTML = `
+
+        <div class="portal-header">
+          <div>
+            <div class="muted small">WELCOME BACK</div>
+            <div class="portal-team">${esc(team.name)}</div>
+            <div class="muted small">Owner: ${esc(team.owner)}</div>
+          </div>
+
+          <button class="btn btn-danger" id="ownerLogout">Logout</button>
+        </div>
+
+        <div class="grid stats-grid">
+
+          <div class="glass stat-card">
+            <div class="stat-label">Record</div>
+            <div class="stat-value" style="font-size:25px">
+              ${standing.w}-${standing.l}-${standing.t}
+            </div>
+          </div>
+
+          <div class="glass stat-card">
+            <div class="stat-label">Points For</div>
+            <div class="stat-value" style="font-size:25px">${standing.pf}</div>
+          </div>
+
+          <div class="glass stat-card">
+            <div class="stat-label">Points Against</div>
+            <div class="stat-value" style="font-size:25px">${standing.pa}</div>
+          </div>
+
+          <div class="glass stat-card">
+            <div class="stat-label">Streak</div>
+            <div class="stat-value" style="font-size:25px">${esc(standing.streak)}</div>
+          </div>
+
+        </div>
+
+        <div class="grid two-grid">
+
+          <div class="glass card">
+            <div class="card-title">
+              <h3>My Upcoming Schedule</h3>
+            </div>
+
+            ${
+              upcoming.length
+              ? upcoming.map(g => {
+                  const opponentId =
+                    g.awayTeamId === team.id ? g.homeTeamId : g.awayTeamId;
+
+                  const opponent = teamById(opponentId);
+
+                  return `
+                    <div class="score-row">
+                      <div>
+                        <strong>Week ${g.week}</strong>
+                        <div class="muted small">
+                          ${g.awayTeamId === team.id ? "@" : "vs"} ${esc(opponent?.name)}
+                        </div>
+                      </div>
+                      <div class="muted small">${esc(g.time)}</div>
+                    </div>
+                  `;
+                }).join("")
+              : '<div class="empty">No upcoming games.</div>'
+            }
+          </div>
+
+          <div class="glass card">
+            <div class="card-title">
+              <h3>My Recent Games</h3>
+            </div>
+
+            ${
+              completed.length
+              ? completed.map(g => {
+                  const opponentId =
+                    g.awayTeamId === team.id ? g.homeTeamId : g.awayTeamId;
+
+                  const opponent = teamById(opponentId);
+
+                  const myScore =
+                    g.awayTeamId === team.id ? g.awayScore : g.homeScore;
+
+                  const oppScore =
+                    g.awayTeamId === team.id ? g.homeScore : g.awayScore;
+
+                  return `
+                    <div class="score-row">
+                      <div>
+                        <strong>Week ${g.week}</strong>
+                        <div class="muted small">${esc(opponent?.name)}</div>
+                      </div>
+                      <strong>${myScore}-${oppScore}</strong>
+                    </div>
+                  `;
+                }).join("")
+              : '<div class="empty">No completed games.</div>'
+            }
+          </div>
+
+        </div>
+
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>My Roster</h3>
+            <span class="pill pill-gold">53 Players</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>OVR</th>
+                  <th>Age</th>
+                  <th>Speed</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${roster.map(p => `
+                  <tr>
+                    <td>${p.number}</td>
+                    <td><strong>${esc(p.name)}</strong></td>
+                    <td><span class="pos-badge">${p.position}</span></td>
+                    <td class="ovr">${p.ovr}</td>
+                    <td>${p.age}</td>
+                    <td>${p.speed}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>My Trade Requests</h3>
+          </div>
+
+          ${
+            trades.length
+            ? trades.map(t => `
+              <div class="score-row">
+                <div>
+                  <strong>${esc(t.player)}</strong>
+                  <div class="muted small">${esc(t.position)} • OVR ${t.ovr}</div>
+                </div>
+                <div class="muted small">${esc(t.notes)}</div>
+              </div>
+            `).join("")
+            : '<div class="empty">No trade requests.</div>'
+          }
+        </div>
+
+        <div class="glass card" style="margin-top:15px">
+          <div class="card-title">
+            <h3>Submit Score</h3>
+          </div>
+
+          <p class="muted small">
+            Use the main Scores tab to report an official result.
+          </p>
+
+          <button class="btn btn-red" id="ownerGoScores">
+            Go To Score Reporting
+          </button>
+        </div>
+      `;
+
+      document.getElementById("ownerLogout").addEventListener("click", () => {
+        loggedOwnerTeamId = null;
+        toast("Owner logged out.", "info");
+        renderOwnerPortal();
+      });
+
+      document.getElementById("ownerGoScores").addEventListener("click", () => {
+        showView("scores");
+      });
+    }
+
+    document.getElementById("ownerLoginForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const teamId = document.getElementById("ownerTeamLogin").value;
+      const password = document.getElementById("ownerPassword").value;
+
+      if (!teamId || !password) {
+        toast("Enter your team and password.", "error");
+        return;
+      }
+
+      if (password !== OWNER_PASSWORD) {
+        toast("Incorrect owner password.", "error");
+        return;
+      }
+
+      loggedOwnerTeamId = teamId;
+
+      toast("Owner portal unlocked.");
+
+      renderOwnerPortal();
+    });
+
+    /* ==============================================================
+       MADDEN SYNC
+       ============================================================== */
+
+    function addSyncLog(type, gamesUpdated) {
+
+      state.syncLog.unshift({
+        id: uid("sync"),
+        timestamp: nowText(),
+        type,
+        status: "SUCCESS",
+        gamesUpdated: gamesUpdated || 0
+      });
+
+      state.syncLog = state.syncLog.slice(0,100);
+    }
+
+    function renderMadden() {
+
+      document.getElementById("companionUrl").value =
+        state.settings.companionUrl;
+
+      const last = state.syncLog[0];
+
+      document.getElementById("lastSynced").textContent =
+        last ? last.timestamp : "Never";
+
+      const total = state.syncLog.reduce(
+        (sum, item) => sum + Number(item.gamesUpdated || 0),
+        0
+      );
+
+      document.getElementById("gamesSynced").textContent = total;
+
+      document.getElementById("syncStatus").textContent = "SYNCED";
+
+      document.getElementById("maddenStatusPill").textContent = "SYNCED";
+
+      renderMaddenGameSelect();
+      renderSyncLog();
+    }
+
+    function renderMaddenGameSelect() {
+
+      const weekSelect = document.getElementById("manualWeek");
+      const gameSelect = document.getElementById("manualGame");
+
+      weekSelect.innerHTML = Array.from({length:18}, (_,i) => {
+        const week = i + 1;
+
+        return `
+          <option value="${week}">
+            Week ${week}
+          </option>
+        `;
+      }).join("");
+
+      weekSelect.value = state.settings.currentWeek;
+
+      function populateGames() {
+
+        const week = Number(weekSelect.value);
+
+        const games = state.schedule.filter(g => g.week === week);
+
+        gameSelect.innerHTML = games.map(g => {
+
+          const away = teamById(g.awayTeamId);
+          const home = teamById(g.homeTeamId);
+
+          return `
+            <option value="${g.id}">
+              ${esc(away?.name)} @ ${esc(home?.name)}
+            </option>
+          `;
+        }).join("");
+      }
+
+      weekSelect.onchange = populateGames;
+
+      populateGames();
+    }
+
+    function renderSyncLog() {
+
+      const body = document.getElementById("syncLogTable");
+
+      if (!state.syncLog.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty">No sync activity yet.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = state.syncLog.map(log => `
+        <tr>
+          <td>${esc(log.timestamp)}</td>
+          <td>${esc(log.type)}</td>
+          <td><span class="pill pill-green">${esc(log.status)}</span></td>
+          <td>${log.gamesUpdated}</td>
+        </tr>
+      `).join("");
+    }
+
+    document.getElementById("manualMaddenForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const gameId = document.getElementById("manualGame").value;
+
+      const game = state.schedule.find(g => g.id === gameId);
+
+      if (!game) {
+        toast("Select a valid game.", "error");
+        return;
+      }
+
+      const homeScore = document.getElementById("manualHomeScore").value;
+      const awayScore = document.getElementById("manualAwayScore").value;
+
+      if (homeScore === "" || awayScore === "") {
+        toast("Enter both scores.", "error");
+        return;
+      }
+
+      if (game.status === "Final") {
+        toast("This game is already final.", "error");
+        return;
+      }
+
+      game.homeScore = Number(homeScore);
+      game.awayScore = Number(awayScore);
+      game.status = "Final";
+
+      updateStandingsFromGame(game);
+
+      addSyncLog("Manual Score Entry", 1);
+
+      saveState();
+
+      toast("Madden score synced.");
+
+      this.reset();
+
+      renderMadden();
+      renderHome();
+    });
+
+    document.getElementById("openCompanionBtn").addEventListener("click", () => {
+      openUrl(state.settings.companionUrl);
+    });
+
+    /* ==============================================================
+       DISCORD
+       ============================================================== */
+
+    function renderDiscord() {
+
+      document.getElementById("discordUrl").value =
+        state.settings.discordUrl;
+
+      const join = document.getElementById("discordJoinButton");
+
+      join.href = validUrl(state.settings.discordUrl)
+        ? state.settings.discordUrl
+        : "#";
+
+      document.getElementById("notifySchedule").checked =
+        state.notificationSettings?.schedule !== false;
+
+      document.getElementById("notifyScores").checked =
+        state.notificationSettings?.scores !== false;
+
+      document.getElementById("notifyAnnouncements").checked =
+        state.notificationSettings?.announcements !== false;
+    }
+
+    document.getElementById("openDiscordBtn").addEventListener("click", () => {
+      openUrl(state.settings.discordUrl);
+    });
+
+    document.getElementById("notifySchedule").addEventListener("change", e => {
+      state.notificationSettings.schedule = e.target.checked;
+      saveState();
+    });
+
+    document.getElementById("notifyScores").addEventListener("change", e => {
+      state.notificationSettings.scores = e.target.checked;
+      saveState();
+    });
+
+    document.getElementById("notifyAnnouncements").addEventListener("change", e => {
+      state.notificationSettings.announcements = e.target.checked;
+      saveState();
+    });
+
+    /* ==============================================================
+       ADMIN
+       ============================================================== */
+
+    let adminUnlocked = false;
+
+    document.getElementById("adminLoginForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const pin = document.getElementById("adminPin").value;
+
+      if (pin !== ADMIN_PIN) {
+        toast("Incorrect admin PIN.", "error");
+        return;
+      }
+
+      adminUnlocked = true;
+
+      document.getElementById("adminLockView").classList.add("hidden");
+      document.getElementById("adminPanel").classList.remove("hidden");
+
+      toast("Admin portal unlocked.");
+
+      renderAdmin();
+    });
+
+    document.getElementById("adminLogout").addEventListener("click", () => {
+
+      adminUnlocked = false;
+
+      document.getElementById("adminLockView").classList.remove("hidden");
+      document.getElementById("adminPanel").classList.add("hidden");
+
+      document.getElementById("adminPin").value = "";
+
+      toast("Admin portal locked.", "info");
+    });
+
+    function renderAdmin() {
+
+      if (!adminUnlocked) return;
+
+      document.getElementById("settingSeason").value =
+        state.settings.seasonName;
+
+      document.getElementById("settingWeek").value =
+        state.settings.currentWeek;
+
+      document.getElementById("settingCommissioner").value =
+        state.settings.commissioner;
+
+      document.getElementById("settingDiscord").value =
+        state.settings.discordUrl;
+
+      document.getElementById("settingYoutube").value =
+        state.settings.youtubeUrl;
+
+      document.getElementById("settingCompanion").value =
+        state.settings.companionUrl;
+
+      renderAdminAnnouncements();
+      renderAdminTeams();
+      renderAdminSchedule();
+      renderDiscipline();
+      populateAdminWeekSelect();
+    }
+
+    /* SETTINGS */
+
+    document.getElementById("settingsForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const seasonName =
+        document.getElementById("settingSeason").value.trim();
+
+      const currentWeek =
+        Number(document.getElementById("settingWeek").value);
+
+      const commissioner =
+        document.getElementById("settingCommissioner").value.trim();
+
+      const discord =
+        document.getElementById("settingDiscord").value.trim();
+
+      const youtube =
+        document.getElementById("settingYoutube").value.trim();
+
+      const companion =
+        document.getElementById("settingCompanion").value.trim();
+
+      if (!seasonName || !commissioner) {
+        toast("Season name and commissioner are required.", "error");
+        return;
+      }
+
+      if (currentWeek < 1 || currentWeek > 19) {
+        toast("Current week must be 1-19.", "error");
+        return;
+      }
+
+      state.settings.seasonName = seasonName;
+      state.settings.season =
+        (seasonName.match(/\d{4}/) || ["2026"])[0];
+
+      state.settings.currentWeek = currentWeek;
+      state.settings.commissioner = commissioner;
+      state.settings.discordUrl = discord;
+      state.settings.youtubeUrl = youtube;
+      state.settings.companionUrl = companion;
+
+      scheduleWeek = currentWeek;
+      scoreWeek = currentWeek;
+
+      saveState();
+
+      toast("League settings saved.");
+
+      renderCurrentView();
+    });
+
+    /* ANNOUNCEMENTS */
+
+    document.getElementById("announcementForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const title =
+        document.getElementById("announcementTitle").value.trim();
+
+      const text =
+        document.getElementById("announcementText").value.trim();
+
+      if (!title || !text) {
+        toast("Complete the announcement.", "error");
+        return;
+      }
+
+      state.announcements.unshift({
+        id: uid("ann"),
+        title,
+        text,
+        date: nowText()
+      });
+
+      saveState();
+
+      this.reset();
+
+      toast("Announcement added.");
+
+      renderAdminAnnouncements();
+      renderHome();
+    });
+
+    function renderAdminAnnouncements() {
+
+      const el = document.getElementById("adminAnnouncements");
+
+      el.innerHTML = state.announcements.length
+        ? state.announcements.map(a => `
+          <div class="announcement" style="display:flex;justify-content:space-between;gap:12px">
+            <div>
+              <strong>${esc(a.title)}</strong>
+              <div class="small">${esc(a.text)}</div>
+              <small>${esc(a.date)}</small>
+            </div>
+
+            <button class="btn btn-danger"
+                    data-delete-ann="${a.id}">
+              Delete
+            </button>
+          </div>
+        `).join("")
+        : '<div class="empty">No announcements.</div>';
+
+      el.querySelectorAll("[data-delete-ann]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          state.announcements =
+            state.announcements.filter(
+              a => a.id !== btn.dataset.deleteAnn
+            );
+
+          saveState();
+
+          toast("Announcement deleted.");
+
+          renderAdminAnnouncements();
+          renderHome();
+        });
+      });
+    }
+
+    /* TEAMS */
+
+    document.getElementById("teamForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const name =
+        document.getElementById("newTeamName").value.trim();
+
+      const owner =
+        document.getElementById("newTeamOwner").value.trim();
+
+      const conference =
+        document.getElementById("newTeamConference").value;
+
+      const division =
+        document.getElementById("newTeamDivision").value;
+
+      if (!name || !owner) {
+        toast("Team name and owner are required.", "error");
+        return;
+      }
+
+      if (teamByName(name)) {
+        toast("That team already exists.", "error");
+        return;
+      }
+
+      const team = {
+        id: uid("team"),
+        name,
+        owner,
+        conference,
+        division,
+        password: OWNER_PASSWORD
+      };
+
+      state.teams.push(team);
+
+      state.standings.push({
+        teamId: team.id,
+        w: 0,
+        l: 0,
+        t: 0,
+        pf: 0,
+        pa: 0,
+        streak: "—"
+      });
+
+      saveState();
+
+      this.reset();
+
+      toast("Team added.");
+
+      renderAdminTeams();
+      populateGlobalSelects();
+    });
+
+    function renderAdminTeams() {
+
+      const body = document.getElementById("adminTeamsTable");
+
+      body.innerHTML = state.teams.map(team => `
+        <tr>
+          <td><strong>${esc(team.name)}</strong></td>
+          <td>${esc(team.owner)}</td>
+          <td>${esc(team.conference)}</td>
+          <td>${esc(team.division)}</td>
+          <td>
+            <button class="btn btn-danger"
+                    data-delete-team="${team.id}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `).join("");
+
+      body.querySelectorAll("[data-delete-team]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          const id = btn.dataset.deleteTeam;
+
+          if (state.teams.length <= 2) {
+            toast("At least two teams are required.", "error");
+            return;
+          }
+
+          const team = teamById(id);
+
+          if (!team) return;
+
+          if (!confirm("Delete " + team.name + "?")) {
+            return;
+          }
+
+          state.teams =
+            state.teams.filter(t => t.id !== id);
+
+          state.standings =
+            state.standings.filter(s => s.teamId !== id);
+
+          state.schedule =
+            state.schedule.filter(
+              g => g.awayTeamId !== id && g.homeTeamId !== id
+            );
+
+          delete state.rosters[id];
+
+          saveState();
+
+          toast("Team deleted.");
+
+          renderAdminTeams();
+          populateGlobalSelects();
+          renderCurrentView();
+        });
+      });
+    }
+
+    /* ADMIN SCHEDULE */
+
+    function populateAdminWeekSelect() {
+
+      const select = document.getElementById("adminScheduleWeek");
+
+      select.innerHTML = Array.from({length:18}, (_,i) => {
+        const week = i + 1;
+
+        return `
+          <option value="${week}">
+            Week ${week}
+          </option>
+        `;
+      }).join("");
+
+      select.value = state.settings.currentWeek;
+
+      select.onchange = renderAdminSchedule;
+    }
+
+    function renderAdminSchedule() {
+
+      const select = document.getElementById("adminScheduleWeek");
+
+      if (!select) return;
+
+      const week = Number(select.value || state.settings.currentWeek);
+
+      const games = state.schedule.filter(g => g.week === week);
+
+      const container = document.getElementById("adminScheduleGames");
+
+      if (!games.length) {
+        container.innerHTML =
+          '<div class="empty">No games scheduled for this week.</div>';
+        return;
+      }
+
+      container.innerHTML = games.map(g => {
+
+        const away = teamById(g.awayTeamId);
+        const home = teamById(g.homeTeamId);
+
+        return `
+          <div class="glass card" style="margin-bottom:10px">
+
+            <div class="card-title">
+              <h3>${esc(away?.name)} @ ${esc(home?.name)}</h3>
+              <span class="pill ${g.status === "Final" ? "pill-green" : "pill-gold"}">
+                ${g.status}
+              </span>
+            </div>
+
+            <div class="form-grid three">
+
+              <div class="field">
+                <label>Date / Time</label>
+                <input
+                  data-game-time="${g.id}"
+                  value="${esc(g.time)}"
+                  placeholder="Sunday 8:00 PM">
+              </div>
+
+              <div class="field">
+                <label>Away Score</label>
+                <input
+                  type="number"
+                  min="0"
+                  data-away-score="${g.id}"
+                  value="${g.awayScore ?? ""}">
+              </div>
+
+              <div class="field">
+                <label>Home Score</label>
+                <input
+                  type="number"
+                  min="0"
+                  data-home-score="${g.id}"
+                  value="${g.homeScore ?? ""}">
+              </div>
+
+              <div style="display:flex;align-items:end;gap:7px">
+
+                <button class="btn btn-red"
+                        data-save-game="${g.id}">
+                  Save Game
+                </button>
+
+                <button class="btn"
+                        data-reset-game="${g.id}">
+                  Reset
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      container.querySelectorAll("[data-save-game]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          const game = state.schedule.find(
+            g => g.id === btn.dataset.saveGame
+          );
+
+          if (!game) return;
+
+          const timeInput =
+            container.querySelector(
+              `[data-game-time="${game.id}"]`
+            );
+
+          const awayInput =
+            container.querySelector(
+              `[data-away-score="${game.id}"]`
+            );
+
+          const homeInput =
+            container.querySelector(
+              `[data-home-score="${game.id}"]`
+            );
+
+          game.time = timeInput.value.trim();
+
+          const hadFinal = game.status === "Final";
+
+          if (awayInput.value !== "" && homeInput.value !== "") {
+
+            if (!hadFinal) {
+              game.awayScore = Number(awayInput.value);
+              game.homeScore = Number(homeInput.value);
+              game.status = "Final";
+
+              updateStandingsFromGame(game);
+            } else {
+              game.awayScore = Number(awayInput.value);
+              game.homeScore = Number(homeInput.value);
+            }
+
+          } else {
+
+            game.status = "Scheduled";
+            game.awayScore = null;
+            game.homeScore = null;
+          }
+
+          saveState();
+
+          toast("Game updated.");
+
+          renderAdminSchedule();
+          renderHome();
+        });
+      });
+
+      container.querySelectorAll("[data-reset-game]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          const game = state.schedule.find(
+            g => g.id === btn.dataset.resetGame
+          );
+
+          if (!game) return;
+
+          game.status = "Scheduled";
+          game.awayScore = null;
+          game.homeScore = null;
+
+          saveState();
+
+          toast("Game reset.");
+
+          renderAdminSchedule();
+          renderHome();
+        });
+      });
+    }
+
+    /* DISCIPLINE */
+
+    document.getElementById("disciplineForm").addEventListener("submit", function(e) {
+
+      e.preventDefault();
+
+      const team =
+        document.getElementById("disciplineTeam").value;
+
+      const reason =
+        document.getElementById("disciplineReason").value.trim();
+
+      const amount =
+        Number(document.getElementById("disciplineAmount").value);
+
+      const suspension =
+        Number(document.getElementById("disciplineSuspension").value || 0);
+
+      if (!team || !reason || !Number.isFinite(amount)) {
+        toast("Complete all discipline fields.", "error");
+        return;
+      }
+
+      state.discipline.unshift({
+        id: uid("discipline"),
+        date: nowText(),
+        team,
+        reason,
+        amount,
+        suspension
+      });
+
+      saveState();
+
+      this.reset();
+
+      toast("Discipline record added.");
+
+      renderDiscipline();
+    });
+
+    function renderDiscipline() {
+
+      const body = document.getElementById("disciplineTable");
+
+      if (!state.discipline.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6" class="empty">No discipline records.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = state.discipline.map(d => `
+        <tr>
+          <td>${esc(d.date)}</td>
+          <td>${esc(d.team)}</td>
+          <td>${esc(d.reason)}</td>
+          <td>${money(d.amount)}</td>
+          <td>${d.suspension} game(s)</td>
+          <td>
+            <button class="btn btn-danger"
+                    data-delete-discipline="${d.id}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `).join("");
+
+      body.querySelectorAll("[data-delete-discipline]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+          state.discipline =
+            state.discipline.filter(
+              d => d.id !== btn.dataset.deleteDiscipline
+            );
+
+          saveState();
+
+          toast("Discipline record deleted.");
+
+          renderDiscipline();
+        });
+      });
+    }
+
+    /* SAVE ALL */
+
+    document.getElementById("saveAllSettings").addEventListener("click", () => {
+
+      saveState();
+
+      toast("All league data saved to localStorage.");
+
+      renderCurrentView();
+    });
+
+    /* ==============================================================
+       GLOBAL SELECTS
+       ============================================================== */
+
+    function populateGlobalSelects() {
+
+      const teamSelects = [
+        "rosterTeamSelect",
+        "tradeTeam",
+        "ownerTeamLogin",
+        "disciplineTeam"
+      ];
+
+      teamSelects.forEach(id => {
+
+        const select = document.getElementById(id);
+
+        if (!select) return;
+
+        const oldValue = select.value;
+
+        select.innerHTML = state.teams.map(team => `
+          <option value="${esc(team.id)}">
+            ${esc(team.name)}
+          </option>
+        `).join("");
+
+        if (
+          state.teams.some(t => t.id === oldValue)
+        ) {
+          select.value = oldValue;
+        }
+      });
+
+      const rosterSelect = document.getElementById("rosterTeamSelect");
+
+      if (rosterSelect) {
+
+        if (!rosterTeamId && state.teams[0]) {
+          rosterTeamId = state.teams[0].id;
+        }
+
+        rosterSelect.value = rosterTeamId;
+      }
+
+      if (document.getElementById("ownerTeamLogin")?.options.length) {
+        document.getElementById("ownerTeamLogin").selectedIndex = 0;
+      }
+
+      if (document.getElementById("disciplineTeam")?.options.length) {
+        document.getElementById("disciplineTeam").selectedIndex = 0;
+      }
+    }
+
+    document.getElementById("rosterTeamSelect").addEventListener("change", function() {
+
+      rosterTeamId = this.value;
+
+      renderRosters();
+    });
+
+    /* ==============================================================
+       COPY BUTTONS
+       ============================================================== */
+
+    document.addEventListener("click", function(e) {
+
+      const button = e.target.closest("[data-copy-input]");
+
+      if (!button) return;
+
+      const input = document.getElementById(
+        button.dataset.copyInput
+      );
+
+      if (!input) return;
+
+      copyText(input.value);
+    });
+
+    /* ==============================================================
+       EXPORT / IMPORT
+       ============================================================== */
+
+    document.getElementById("exportData").addEventListener("click", () => {
+
+      const json = JSON.stringify(state, null, 2);
+
+      const blob = new Blob([json], {
+        type: "application/json"
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download =
+        "RMNFL_League_Data_" +
+        state.settings.season +
+        ".json";
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+
+      toast("League data exported.");
+    });
+
+    document.getElementById("importData").addEventListener("click", () => {
+      document.getElementById("importFile").click();
+    });
+
+    document.getElementById("importFile").addEventListener("change", function() {
+
+      const file = this.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+
+        try {
+
+          const imported = JSON.parse(event.target.result);
+
+          if (
+            !imported ||
+            !Array.isArray(imported.teams) ||
+            !Array.isArray(imported.schedule)
+          ) {
+            throw new Error("Invalid RMNFL data file.");
+          }
+
+          state = imported;
+
+          normalizeState();
+
+          scheduleWeek = state.settings.currentWeek;
+          scoreWeek = state.settings.currentWeek;
+
+          toast("League data imported.");
+
+          renderCurrentView();
+
+        } catch (error) {
+
+          console.error(error);
+
+          toast("Import failed. Invalid JSON file.", "error");
+        }
+      };
+
+      reader.readAsText(file);
+
+      this.value = "";
+    });
+
+    document.getElementById("resetData").addEventListener("click", () => {
+
+      const confirmed = confirm(
+        "RESET ALL RMNFL DATA?\n\nThis will erase local league changes and restore the default Season 2026 data."
+      );
+
+      if (!confirmed) return;
+
+      state = createDefaultState();
+
+      saveState();
+
+      rosterTeamId = state.teams[0]?.id || "";
+      scheduleWeek = 1;
+      scoreWeek = 1;
+
+      toast("League data reset.");
+
+      renderCurrentView();
+    });
+
+    /* ==============================================================
+       INITIALIZATION
+       ============================================================== */
+
+    function initialize() {
+
+      populateGlobalSelects();
+
+      if (state.teams[0]) {
+        rosterTeamId = state.teams[0].id;
+      }
+
+      renderHome();
+
+      /*
+       * Attempt to activate Lucide icons if the CDN loaded.
+       * Nothing breaks if it did not.
+       */
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === "function") {
+          window.lucide.createIcons();
+        }
+      } catch (e) {
+        console.warn("Optional Lucide enhancement unavailable.");
+      }
+
+      /*
+       * Optional Tailwind enhancement intentionally does not
+       * control the application's functionality.
+       */
+      console.log(
+        "%cRMNFL League Platform loaded successfully.",
+        "color:#dc2626;font-weight:bold;font-size:16px"
+      );
+    }
+
+    initialize();
+
+  })();
+  </script>
+
+</body>
+</html>
