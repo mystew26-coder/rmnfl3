@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark" />
+<title>RMNFL League Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        navy: { 900:'#0a0e1a', 800:'#0f1425', 700:'#141b33', 600:'#1a2340', 500:'#222d50' },
+        accent: { red:'#DC2626', redHover:'#B91C1C', redLight:'#FCA5A5', gold:'#F59E0B', goldDark:'#D97706' },
+        glass: { bg:'rgba(15,20,37,0.85)', border:'rgba(255,255,255,0.08)' }
+      },
+      fontFamily: {
+        display: ['"Bebas Neue"','cursive'],
+        sans: ['Inter','sans-serif']
+      }
+    }
+  }
+};
+</script>
+<style>
+* { box-sizing: border-box; }
+body { background: #0a0e1a; color: #e2e8f0; font-family: 'Inter', sans-serif; margin:0; }
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:#0a0e1a; }
+::-webkit-scrollbar-thumb { background:#1a2340; border-radius:3px; }
+.glass-card {
+  background: rgba(15,20,37,0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+}
+.nav-tab { transition: all 0.2s; white-space: nowrap; }
+.nav-tab.active { color: #DC2626; border-bottom: 2px solid #DC2626; }
+.nav-tab:hover { color: #FCA5A5; }
+.view-section { display:none; animation: fadeIn 0.3s ease; }
+.view-section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes ticker { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
+.ticker-text { animation: ticker 30s linear infinite; }
+.toast-container { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+.toast { padding:12px 20px; border-radius:8px; font-size:14px; font-weight:500; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; }
+@keyframes toastIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+@keyframes toastOut { from{opacity:1} to{opacity:0;transform:translateX(40px)} }
+.accordion-content { max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+.accordion-content.open { max-height:2000px; }
+input, select, textarea {
+  background: #141b33;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { border-color: #DC2626; }
+select option { background: #0f1425; color: #e2e8f0; }
+button { font-family: 'Inter', sans-serif; cursor:pointer; transition: all 0.2s; }
+.btn-red { background:#DC2626; color:#fff; padding:8px 16px; border-radius:8px; border:none; font-weight:600; font-size:14px; }
+.btn-red:hover { background:#B91C1C; }
+.btn-gold { background:#F59E0B; color:#0a0e1a; padding:8px 16px; border-radius:8px; border:none; font-weight:600; font-size:14px; }
+.btn-gold:hover { background:#D97706; }
+.btn-outline { background:transparent; color:#e2e8f0; padding:8px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); font-weight:500; font-size:14px; }
+.btn-outline:hover { border-color:#DC2626; color:#DC2626; }
+.stat-card { text-align:center; }
+.stat-card .stat-num { font-family:'Bebas Neue',cursive; font-size:2.5rem; line-height:1; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:8px 10px; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.08); cursor:pointer; user-select:none; }
+td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.04); }
+tr:hover td { background: rgba(255,255,255,0.02); }
+.badge { display:inline-block; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; text-transform:uppercase; }
+.badge-green { background:rgba(34,197,94,0.15); color:#22c55e; }
+.badge-yellow { background:rgba(245,158,11,0.15); color:#F59E0B; }
+.badge-red { background:rgba(220,38,38,0.15); color:#DC2626; }
+.badge-blue { background:rgba(59,130,246,0.15); color:#3b82f6; }
+.badge-gray { background:rgba(148,163,184,0.15); color:#94a3b8; }
+.badge-orange { background:rgba(249,115,22,0.15); color:#f97316; }
+.badge-black { background:rgba(0,0,0,0.4); color:#64748b; }
+.mobile-nav { overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.mobile-nav::-webkit-scrollbar { display:none; }
+</style>
+</head>
+<body data-id="0" class="min-h-screen flex flex-col">
+<app-icon data-id="1" hidden data-icon="trophy" data-palette="Red"></app-icon>
+
+<!-- Toast Container -->
+<div data-id="2" id="toast-container" class="toast-container"></div>
+
+<!-- Sticky Nav -->
+<header data-id="3" class="sticky top-0 z-50 bg-navy-800/95 backdrop-blur border-b border-white/5">
+  <div data-id="4" class="max-w-7xl mx-auto px-2 md:px-4">
+    <nav data-id="5" id="main-nav" class="mobile-nav flex items-center gap-1 py-2">
+      <button data-id="6" class="nav-tab active flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="home"><i data-id="7" data-lucide="home" class="w-4 h-4"></i><span data-id="8" class="hidden sm:inline">Home</span></button>
+      <button data-id="9" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="standings"><i data-id="10" data-lucide="bar-chart-3" class="w-4 h-4"></i><span data-id="11" class="hidden sm:inline">Standings</span></button>
+      <button data-id="12" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="schedule"><i data-id="13" data-lucide="calendar" class="w-4 h-4"></i><span data-id="14" class="hidden sm:inline">Schedule</span></button>
+      <button data-id="15" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="scores"><i data-id="16" data-lucide="trophy" class="w-4 h-4"></i><span data-id="17" class="hidden sm:inline">Scores</span></button>
+      <button data-id="18" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="rosters"><i data-id="19" data-lucide="users" class="w-4 h-4"></i><span data-id="20" class="hidden sm:inline">Rosters</span></button>
+      <button data-id="21" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="rules"><i data-id="22" data-lucide="scroll-text" class="w-4 h-4"></i><span data-id="23" class="hidden sm:inline">Rules</span></button>
+      <button data-id="24" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="tradeblock"><i data-id="25" data-lucide="repeat" class="w-4 h-4"></i><span data-id="26" class="hidden sm:inline">Trade Block</span></button>
+      <button data-id="27" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="media"><i data-id="28" data-lucide="video" class="w-4 h-4"></i><span data-id="29" class="hidden sm:inline">Media</span></button>
+      <button data-id="30" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="owner"><i data-id="31" data-lucide="lock" class="w-4 h-4"></i><span data-id="32" class="hidden sm:inline">Owner Portal</span></button>
+      <button data-id="33" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="madden"><i data-id="34" data-lucide="smartphone" class="w-4 h-4"></i><span data-id="35" class="hidden sm:inline">Madden Sync</span></button>
+      <button data-id="36" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="discord"><i data-id="37" data-lucide="message-circle" class="w-4 h-4"></i><span data-id="38" class="hidden sm:inline">Discord</span></button>
+      <button data-id="39" class="nav-tab flex items-center gap-1.5 px-3 py-2 text-xs md:text-sm font-medium rounded" data-view="admin"><i data-id="40" data-lucide="settings" class="w-4 h-4"></i><span data-id="41" class="hidden sm:inline">Admin</span></button>
+    </nav>
+  </div>
+</header>
+
+<main data-id="42" class="flex-1 max-w-7xl mx-auto w-full px-4 md:px-6 py-6">
+
+<!-- ==================== HOME ==================== -->
+<section data-id="43" id="view-home" class="view-section active">
+  <!-- Ticker -->
+  <div data-id="44" class="glass-card overflow-hidden mb-6 py-2 px-4">
+    <div data-id="45" class="relative overflow-hidden h-6">
+      <div data-id="46" class="ticker-text absolute whitespace-nowrap text-sm text-accent-gold font-medium">
+        🏈 RMNFL Season 2026 is LIVE! &nbsp;|&nbsp; 🔥 Week 4 matchups heating up &nbsp;|&nbsp; 🏆 Trade deadline approaching — get your deals in! &nbsp;|&nbsp; 📣 Commissioner update: All games must be played within 72 hours &nbsp;|&nbsp; ⚡ Kansas City Chiefs on a 3-game win streak &nbsp;|&nbsp; 📅 Playoff race tightening in the AFC North &nbsp;|&nbsp; 🎮 Madden Companion App sync required after every game
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div data-id="47" class="text-center mb-8">
+    <h1 data-id="48" class="font-display text-5xl md:text-7xl text-white tracking-wider">RMNFL</h1>
+    <div data-id="49" class="inline-block mt-2"><span data-id="50" class="badge badge-red text-sm px-4 py-1">SEASON 2026</span></div>
+    <p data-id="51" class="text-sm text-slate-400 mt-2">Real Madden NFL • Competitive Franchise League</p>
+  </div>
+
+  <!-- Stat Cards -->
+  <div data-id="52" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div data-id="53" class="glass-card p-5 stat-card">
+      <div data-id="54" class="stat-num text-accent-red" id="home-total-teams">32</div>
+      <div data-id="55" class="text-xs text-slate-400 uppercase tracking-wider mt-1">Total Teams</div>
+    </div>
+    <div data-id="56" class="glass-card p-5 stat-card">
+      <div data-id="57" class="stat-num text-accent-gold" id="home-current-week">4</div>
+      <div data-id="58" class="text-xs text-slate-400 uppercase tracking-wider mt-1">Current Week</div>
+    </div>
+    <div data-id="59" class="glass-card p-5 stat-card">
+      <div data-id="60" class="stat-num text-green-400" id="home-games-played">0</div>
+      <div data-id="61" class="text-xs text-slate-400 uppercase tracking-wider mt-1">Games Played</div>
+    </div>
+    <div data-id="62" class="glass-card p-5 stat-card">
+      <div data-id="63" class="stat-num text-blue-400" id="home-active-trades">0</div>
+      <div data-id="64" class="text-xs text-slate-400 uppercase tracking-wider mt-1">Active Trades</div>
+    </div>
+  </div>
+
+  <div data-id="65" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- Recent Scores -->
+    <div data-id="66" class="glass-card p-5">
+      <h3 data-id="67" class="font-display text-xl text-white mb-4 flex items-center gap-2"><i data-id="68" data-lucide="zap" class="w-5 h-5 text-accent-gold"></i>Recent Scores</h3>
+      <div data-id="69" id="home-recent-scores" class="space-y-2 text-sm">
+        <p data-id="70" class="text-slate-500 text-center py-4">No scores submitted yet</p>
+      </div>
+    </div>
+    <!-- Upcoming Games -->
+    <div data-id="71" class="glass-card p-5">
+      <h3 data-id="72" class="font-display text-xl text-white mb-4 flex items-center gap-2"><i data-id="73" data-lucide="calendar" class="w-5 h-5 text-accent-red"></i>Upcoming Games</h3>
+      <div data-id="74" id="home-upcoming" class="space-y-2 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Announcements -->
+  <div data-id="75" class="glass-card p-5">
+    <h3 data-id="76" class="font-display text-xl text-white mb-4 flex items-center gap-2"><i data-id="77" data-lucide="megaphone" class="w-5 h-5 text-accent-gold"></i>League Announcements</h3>
+    <div data-id="78" id="home-announcements" class="space-y-3"></div>
+  </div>
+</section>
+
+<!-- ==================== STANDINGS ==================== -->
+<section data-id="79" id="view-standings" class="view-section">
+  <h2 data-id="80" class="font-display text-3xl text-white mb-4">League Standings</h2>
+  <div data-id="81" class="flex gap-2 mb-6">
+    <button data-id="82" class="btn-red conference-tab" data-conf="AFC">AFC</button>
+    <button data-id="83" class="btn-outline conference-tab" data-conf="NFC">NFC</button>
+  </div>
+  <div data-id="84" id="standings-content"></div>
+</section>
+
+<!-- ==================== SCHEDULE ==================== -->
+<section data-id="85" id="view-schedule" class="view-section">
+  <h2 data-id="86" class="font-display text-3xl text-white mb-4">Season Schedule</h2>
+  <div data-id="87" class="mb-4">
+    <select data-id="88" id="schedule-week-select" class="w-full md:w-64">
+      <option data-id="89" value="1">Week 1</option><option data-id="90" value="2">Week 2</option><option data-id="91" value="3">Week 3</option><option data-id="92" value="4">Week 4</option>
+      <option data-id="93" value="5">Week 5</option><option data-id="94" value="6">Week 6</option><option data-id="95" value="7">Week 7</option><option data-id="96" value="8">Week 8</option>
+      <option data-id="97" value="9">Week 9</option><option data-id="98" value="10">Week 10</option><option data-id="99" value="11">Week 11</option><option data-id="100" value="12">Week 12</option>
+      <option data-id="101" value="13">Week 13</option><option data-id="102" value="14">Week 14</option><option data-id="103" value="15">Week 15</option><option data-id="104" value="16">Week 16</option>
+      <option data-id="105" value="17">Week 17</option><option data-id="106" value="18">Week 18</option>
+      <option data-id="107" value="WC">Wild Card</option><option data-id="108" value="DIV">Divisional</option><option data-id="109" value="CONF">Conference</option><option data-id="110" value="SB">Super Bowl</option>
+    </select>
+  </div>
+  <div data-id="111" id="schedule-games" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</section>
+
+<!-- ==================== SCORES ==================== -->
+<section data-id="112" id="view-scores" class="view-section">
+  <h2 data-id="113" class="font-display text-3xl text-white mb-2">Submit Scores</h2>
+  <p data-id="114" class="text-sm text-slate-400 mb-6">Enter final scores for this week's games.</p>
+  <div data-id="115" id="scores-games" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</section>
+
+<!-- ==================== ROSTERS ==================== -->
+<section data-id="116" id="view-rosters" class="view-section">
+  <h2 data-id="117" class="font-display text-3xl text-white mb-4">Team Rosters</h2>
+  <div data-id="118" class="mb-4">
+    <select data-id="119" id="roster-team-select" class="w-full md:w-80"></select>
+  </div>
+  <div data-id="120" class="glass-card overflow-x-auto">
+    <table data-id="121" id="roster-table">
+      <thead data-id="122"><tr data-id="123"><th data-id="124">#</th><th data-id="125">Player Name</th><th data-id="126">Pos</th><th data-id="127">OVR</th><th data-id="128">Age</th><th data-id="129">Speed</th></tr></thead>
+      <tbody data-id="130" id="roster-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== RULES ==================== -->
+<section data-id="131" id="view-rules" class="view-section">
+  <h2 data-id="132" class="font-display text-3xl text-white mb-6">League Rules & Policies</h2>
+  <div data-id="133" class="space-y-3" id="rules-accordion">
+    <div data-id="134" class="glass-card overflow-hidden">
+      <button data-id="135" class="accordion-btn w-full flex items-center justify-between p-4 text-left font-semibold text-white">
+        <span data-id="136" class="flex items-center gap-2"><i data-id="137" data-lucide="shield" class="w-5 h-5 text-accent-red"></i>1. General Rules</span>
+        <i data-id="138" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div data-id="139" class="accordion-content px-4 pb-4 text-sm text-slate-300 leading-relaxed">
+        <ul data-id="140" class="list-disc list-inside space-y-1">
+          <li data-id="141">All owners must maintain an active roster at all times.</li>
+          <li data-id="142">Communication is required — check Discord daily.</li>
+          <li data-id="143">No quitting mid-game. Complete all scheduled matchups.</li>
+          <li data-id="144">Respect all opponents and league officials.</li>
+          <li data-id="145">Any exploits, glitches, or cheese plays are strictly prohibited.</li>
+          <li data-id="146">Commissioner decisions are final on all disputes.</li>
+          <li data-id="147">All owners must use default game settings unless otherwise noted.</li>
+          <li data-id="148">Sim-style gameplay is expected. Run realistic plays and formations.</li>
+        </ul>
+      </div>
+    </div>
+    <div data-id="149" class="glass-card overflow-hidden">
+      <button data-id="150" class="accordion-btn w-full flex items-center justify-between p-4 text-left font-semibold text-white">
+        <span data-id="151" class="flex items-center gap-2"><i data-id="152" data-lucide="repeat" class="w-5 h-5 text-accent-gold"></i>2. Trade Rules</span>
+        <i data-id="153" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div data-id="154" class="accordion-content px-4 pb-4 text-sm text-slate-300 leading-relaxed">
+        <ul data-id="155" class="list-disc list-inside space-y-1">
+          <li data-id="156">All trades must be posted in #trades on Discord for league review.</li>
+          <li data-id="157">48-hour trade review window — trades can be vetoed by majority vote.</li>
+          <li data-id="158">Commissioner approval is required for all trades to be processed.</li>
+          <li data-id="159">No trades involving future draft picks beyond 2 seasons ahead.</li>
+          <li data-id="160">Salary cap implications must be considered before trading.</li>
+          <li data-id="161">Lopsided trades will be reviewed and may be rejected.</li>
+          <li data-id="162">Trade deadline is Week 12 of the regular season.</li>
+        </ul>
+      </div>
+    </div>
+    <div data-id="163" class="glass-card overflow-hidden">
+      <button data-id="164" class="accordion-btn w-full flex items-center justify-between p-4 text-left font-semibold text-white">
+        <span data-id="165" class="flex items-center gap-2"><i data-id="166" data-lucide="calendar" class="w-5 h-5 text-blue-400"></i>3. Scheduling Rules</span>
+        <i data-id="167" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div data-id="168" class="accordion-content px-4 pb-4 text-sm text-slate-300 leading-relaxed">
+        <ul data-id="169" class="list-disc list-inside space-y-1">
+          <li data-id="170">Games must be scheduled within 48 hours of the week advancing.</li>
+          <li data-id="171">Scheduled games must be played within 72 hours.</li>
+          <li data-id="172">If no agreement on time, the commissioner will assign a default slot.</li>
+          <li data-id="173">Post scheduling info in #scheduling on Discord.</li>
+          <li data-id="174">Notify your opponent and an admin if you need to reschedule.</li>
+          <li data-id="175">Failure to schedule results in a warning; repeated offenses lead to fines.</li>
+        </ul>
+      </div>
+    </div>
+    <div data-id="176" class="glass-card overflow-hidden">
+      <button data-id="177" class="accordion-btn w-full flex items-center justify-between p-4 text-left font-semibold text-white">
+        <span data-id="178" class="flex items-center gap-2"><i data-id="179" data-lucide="gavel" class="w-5 h-5 text-red-400"></i>4. Discipline Policy</span>
+        <i data-id="180" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div data-id="181" class="accordion-content px-4 pb-4 text-sm text-slate-300 leading-relaxed">
+        <ul data-id="182" class="list-disc list-inside space-y-1">
+          <li data-id="183"><strong data-id="184">$5,000 fine</strong> — Late game (not played within 72-hour window).</li>
+          <li data-id="185"><strong data-id="186">$10,000 fine</strong> — No-show (failure to play a scheduled game).</li>
+          <li data-id="187"><strong data-id="188">$25,000 fine</strong> — Unsportsmanlike conduct (trash talk, rage quitting, exploiting).</li>
+          <li data-id="189"><strong data-id="190">$50,000 fine</strong> — Repeat offender (3+ violations in a season).</li>
+          <li data-id="191">Fines are deducted from in-game salary cap space.</li>
+          <li data-id="192">Suspensions may be issued for severe or repeated violations.</li>
+          <li data-id="193">Appeals must be submitted within 24 hours to the commissioner.</li>
+        </ul>
+      </div>
+    </div>
+    <div data-id="194" class="glass-card overflow-hidden">
+      <button data-id="195" class="accordion-btn w-full flex items-center justify-between p-4 text-left font-semibold text-white">
+        <span data-id="196" class="flex items-center gap-2"><i data-id="197" data-lucide="trophy" class="w-5 h-5 text-accent-gold"></i>5. Playoff Rules</span>
+        <i data-id="198" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div data-id="199" class="accordion-content px-4 pb-4 text-sm text-slate-300 leading-relaxed">
+        <ul data-id="200" class="list-disc list-inside space-y-1">
+          <li data-id="201">7 teams per conference qualify for the playoffs.</li>
+          <li data-id="202">Division winners receive automatic bids (4 per conference).</li>
+          <li data-id="203">3 Wild Card spots awarded by overall record.</li>
+          <li data-id="204">#1 seed receives a first-round bye.</li>
+          <li data-id="205">Tiebreakers: head-to-head, division record, conference record, points for.</li>
+          <li data-id="206">Playoff games must be played within 48 hours — no extensions.</li>
+          <li data-id="207">Super Bowl will be streamed live on the league's media channel.</li>
+        </ul>
+      </div>
+    </div>
+    <div data-id="208" class="glass-card overflow-hidden">
+      <button data-id="209" class="accordion-btn w-full flex items-center justify-between p-4 text-left font-semibold text-white">
+        <span data-id="210" class="flex items-center gap-2"><i data-id="211" data-lucide="smartphone" class="w-5 h-5 text-green-400"></i>6. Madden Sync Rules</span>
+        <i data-id="212" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+      </button>
+      <div data-id="213" class="accordion-content px-4 pb-4 text-sm text-slate-300 leading-relaxed">
+        <ul data-id="214" class="list-disc list-inside space-y-1">
+          <li data-id="215">All owners must download and use the Madden Companion App.</li>
+          <li data-id="216">Stats must be synced after every game — no exceptions.</li>
+          <li data-id="217">Failure to sync within 24 hours results in a $5,000 fine.</li>
+          <li data-id="218">Admin will verify synced data before advancing the week.</li>
+          <li data-id="219">Report any sync errors immediately in #madden-sync on Discord.</li>
+          <li data-id="220">Manual score entry is available as a backup if sync fails.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRADE BLOCK ==================== -->
+<section data-id="221" id="view-tradeblock" class="view-section">
+  <h2 data-id="222" class="font-display text-3xl text-white mb-4">Trade Block</h2>
+  <div data-id="223" class="glass-card p-5 mb-6">
+    <h3 data-id="224" class="font-semibold text-white mb-3">Post a Player</h3>
+    <div data-id="225" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+      <input data-id="226" id="trade-owner" placeholder="Owner Name" class="w-full" />
+      <select data-id="227" id="trade-team" class="w-full"></select>
+      <input data-id="228" id="trade-player" placeholder="Player Name" class="w-full" />
+    </div>
+    <div data-id="229" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+      <select data-id="230" id="trade-pos" class="w-full">
+        <option data-id="231" value="">Position</option>
+        <option data-id="232">QB</option><option data-id="233">RB</option><option data-id="234">WR</option><option data-id="235">TE</option><option data-id="236">OL</option><option data-id="237">DL</option><option data-id="238">LB</option><option data-id="239">CB</option><option data-id="240">S</option><option data-id="241">K</option><option data-id="242">P</option>
+      </select>
+      <input data-id="243" id="trade-ovr" placeholder="OVR (1-99)" type="number" min="1" max="99" class="w-full" />
+      <input data-id="244" id="trade-notes" placeholder="What are you looking for?" class="w-full" />
+    </div>
+    <button data-id="245" id="trade-submit-btn" class="btn-red">Post to Trade Block</button>
+  </div>
+  <div data-id="246" id="trade-block-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</section>
+
+<!-- ==================== MEDIA ==================== -->
+<section data-id="247" id="view-media" class="view-section">
+  <h2 data-id="248" class="font-display text-3xl text-white mb-6">Media Center</h2>
+  <div data-id="249" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div data-id="250" class="glass-card p-5">
+      <h3 data-id="251" class="font-semibold text-white mb-3 flex items-center gap-2"><i data-id="252" data-lucide="youtube" class="w-5 h-5 text-red-500"></i>League YouTube Channel</h3>
+      <p data-id="253" class="text-sm text-slate-400 mb-2">Visit our channel for highlights, recaps, and live streams.</p>
+      <div data-id="254" class="flex gap-2">
+        <input data-id="255" id="media-yt-url" value="" placeholder="YouTube Channel URL" class="flex-1" />
+        <button data-id="256" id="media-yt-save" class="btn-red text-sm">Save</button>
+      </div>
+      <a data-id="257" id="media-yt-link" href="#" target="_blank" class="inline-block mt-3 text-accent-red text-sm font-medium hover:underline">Open YouTube Channel →</a>
+    </div>
+    <div data-id="258" class="glass-card p-5">
+      <h3 data-id="259" class="font-semibold text-white mb-3 flex items-center gap-2"><i data-id="260" data-lucide="tv" class="w-5 h-5 text-accent-gold"></i>Stream Schedule</h3>
+      <div data-id="261" class="overflow-x-auto">
+        <table data-id="262">
+          <thead data-id="263"><tr data-id="264"><th data-id="265">Day</th><th data-id="266">Time</th><th data-id="267">Matchup</th><th data-id="268">Broadcaster</th></tr></thead>
+          <tbody data-id="269">
+            <tr data-id="270"><td data-id="271">Monday</td><td data-id="272">8:00 PM MST</td><td data-id="273">Chiefs vs Ravens</td><td data-id="274">Commissioner</td></tr>
+            <tr data-id="275"><td data-id="276">Wednesday</td><td data-id="277">9:00 PM MST</td><td data-id="278">Cowboys vs Eagles</td><td data-id="279">Admin</td></tr>
+            <tr data-id="280"><td data-id="281">Friday</td><td data-id="282">7:00 PM MST</td><td data-id="283">Bills vs Dolphins</td><td data-id="284">Commissioner</td></tr>
+            <tr data-id="285"><td data-id="286">Saturday</td><td data-id="287">6:00 PM MST</td><td data-id="288">49ers vs Seahawks</td><td data-id="289">Guest</td></tr>
+            <tr data-id="290"><td data-id="291">Sunday</td><td data-id="292">5:00 PM MST</td><td data-id="293">Featured Matchup</td><td data-id="294">TBD</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Recent Highlights -->
+  <div data-id="295" class="glass-card p-5">
+    <h3 data-id="296" class="font-semibold text-white mb-3 flex items-center gap-2"><i data-id="297" data-lucide="clapperboard" class="w-5 h-5 text-accent-gold"></i>Recent Highlights</h3>
+    <div data-id="298" id="media-highlights" class="space-y-2"></div>
+    <p data-id="299" class="text-slate-500 text-sm text-center py-3" id="media-no-highlights">Highlights will appear here when added by admin.</p>
+  </div>
+</section>
+
+<!-- ==================== OWNER PORTAL ==================== -->
+<section data-id="300" id="view-owner" class="view-section">
+  <h2 data-id="301" class="font-display text-3xl text-white mb-6">Owner Portal</h2>
+  <!-- Login -->
+  <div data-id="302" id="owner-login" class="max-w-md mx-auto">
+    <div data-id="303" class="glass-card p-6">
+      <h3 data-id="304" class="font-semibold text-white text-lg mb-4 text-center">Sign In to Your Team</h3>
+      <div data-id="305" class="space-y-3">
+        <select data-id="306" id="owner-team-select" class="w-full"></select>
+        <input data-id="307" id="owner-password" type="password" placeholder="Password" class="w-full" />
+        <button data-id="308" id="owner-login-btn" class="btn-red w-full">Sign In</button>
+      </div>
+      <p data-id="309" class="text-xs text-slate-500 text-center mt-3">Default password: rmnfl2026</p>
+    </div>
+  </div>
+  <!-- Dashboard (hidden) -->
+  <div data-id="310" id="owner-dashboard" class="hidden">
+    <div data-id="311" class="flex items-center justify-between mb-6">
+      <h3 data-id="312" class="font-display text-2xl text-white" id="owner-team-name"></h3>
+      <button data-id="313" id="owner-logout-btn" class="btn-outline text-sm">Logout</button>
+    </div>
+    <div data-id="314" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div data-id="315" class="glass-card p-5 stat-card">
+        <div data-id="316" class="stat-num text-accent-gold" id="owner-record">0-0-0</div>
+        <div data-id="317" class="text-xs text-slate-400 uppercase tracking-wider mt-1">My Record</div>
+      </div>
+      <div data-id="318" class="glass-card p-5 stat-card">
+        <div data-id="319" class="stat-num text-green-400" id="owner-pf">0</div>
+        <div data-id="320" class="text-xs text-slate-400 uppercase tracking-wider mt-1">Points For</div>
+      </div>
+      <div data-id="321" class="glass-card p-5 stat-card">
+        <div data-id="322" class="stat-num text-red-400" id="owner-pa">0</div>
+        <div data-id="323" class="text-xs text-slate-400 uppercase tracking-wider mt-1">Points Against</div>
+      </div>
+    </div>
+    <div data-id="324" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div data-id="325" class="glass-card p-5">
+        <h4 data-id="326" class="font-semibold text-white mb-3">My Next 3 Games</h4>
+        <div data-id="327" id="owner-next-games" class="space-y-2 text-sm"></div>
+      </div>
+      <div data-id="328" class="glass-card p-5">
+        <h4 data-id="329" class="font-semibold text-white mb-3">Quick Score Submit</h4>
+        <div data-id="330" class="space-y-2">
+          <select data-id="331" id="owner-score-game" class="w-full"></select>
+          <div data-id="332" class="flex gap-2">
+            <input data-id="333" id="owner-score-away" type="number" placeholder="Away Score" class="w-full" />
+            <input data-id="334" id="owner-score-home" type="number" placeholder="Home Score" class="w-full" />
+          </div>
+          <button data-id="335" id="owner-score-submit" class="btn-red w-full">Submit Score</button>
+        </div>
+      </div>
+    </div>
+    <div data-id="336" class="glass-card p-5">
+      <h4 data-id="337" class="font-semibold text-white mb-3">My Roster</h4>
+      <div data-id="338" class="overflow-x-auto">
+        <table data-id="339">
+          <thead data-id="340"><tr data-id="341"><th data-id="342">#</th><th data-id="343">Player</th><th data-id="344">Pos</th><th data-id="345">OVR</th><th data-id="346">Age</th><th data-id="347">Speed</th></tr></thead>
+          <tbody data-id="348" id="owner-roster-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MADDEN SYNC ==================== -->
+<section data-id="349" id="view-madden" class="view-section">
+  <h2 data-id="350" class="font-display text-3xl text-white mb-6">Madden Companion App Sync</h2>
+  <div data-id="351" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div data-id="352" class="glass-card p-5">
+      <h3 data-id="353" class="font-semibold text-white mb-3 flex items-center gap-2"><i data-id="354" data-lucide="link" class="w-5 h-5 text-accent-gold"></i>Companion App League URL</h3>
+      <input data-id="355" id="madden-url" value="https://www.ea.com/games/madden-nfl/companion" class="w-full mb-3" />
+      <div data-id="356" class="flex flex-wrap gap-2">
+        <button data-id="357" id="madden-copy-btn" class="btn-red text-sm">Copy URL</button>
+        <button data-id="358" id="madden-open-btn" class="btn-gold text-sm">Open URL</button>
+        <button data-id="359" id="madden-save-btn" class="btn-outline text-sm">Save URL</button>
+      </div>
+    </div>
+    <div data-id="360" class="glass-card p-5">
+      <h3 data-id="361" class="font-semibold text-white mb-3 flex items-center gap-2"><i data-id="362" data-lucide="activity" class="w-5 h-5 text-green-400"></i>Sync Status</h3>
+      <div data-id="363" class="space-y-2 text-sm">
+        <div data-id="364" class="flex justify-between"><span data-id="365" class="text-slate-400">Last Synced:</span><span data-id="366" id="madden-last-sync" class="text-white">Never</span></div>
+        <div data-id="367" class="flex justify-between"><span data-id="368" class="text-slate-400">Games Synced:</span><span data-id="369" id="madden-games-synced" class="text-white">0</span></div>
+        <div data-id="370" class="flex justify-between"><span data-id="371" class="text-slate-400">Status:</span><span data-id="372" id="madden-status" class="badge badge-yellow">PENDING</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guide -->
+  <div data-id="373" class="glass-card p-5 mb-6">
+    <h3 data-id="374" class="font-semibold text-white mb-4 flex items-center gap-2"><i data-id="375" data-lucide="book-open" class="w-5 h-5 text-accent-red"></i>How to Sync — Step by Step</h3>
+    <div data-id="376" class="space-y-3 text-sm text-slate-300">
+      <div data-id="377" class="flex gap-3 items-start"><span data-id="378" class="flex-shrink-0 w-7 h-7 rounded-full bg-accent-red/20 text-accent-red flex items-center justify-center font-bold text-xs">1</span><p data-id="379">Download the <strong data-id="380">Madden Companion App</strong> from the App Store (iOS) or Google Play (Android).</p></div>
+      <div data-id="381" class="flex gap-3 items-start"><span data-id="382" class="flex-shrink-0 w-7 h-7 rounded-full bg-accent-red/20 text-accent-red flex items-center justify-center font-bold text-xs">2</span><p data-id="383">Open the app and tap <strong data-id="384">"Join League"</strong> or <strong data-id="385">"My Leagues"</strong>.</p></div>
+      <div data-id="386" class="flex gap-3 items-start"><span data-id="387" class="flex-shrink-0 w-7 h-7 rounded-full bg-accent-red/20 text-accent-red flex items-center justify-center font-bold text-xs">3</span><p data-id="388">Paste the <strong data-id="389">League URL</strong> shown above into the app when prompted.</p></div>
+      <div data-id="390" class="flex gap-3 items-start"><span data-id="391" class="flex-shrink-0 w-7 h-7 rounded-full bg-accent-red/20 text-accent-red flex items-center justify-center font-bold text-xs">4</span><p data-id="392">After each game, open the Companion App and tap <strong data-id="393">"Sync Stats"</strong> to upload your game data.</p></div>
+      <div data-id="394" class="flex gap-3 items-start"><span data-id="395" class="flex-shrink-0 w-7 h-7 rounded-full bg-accent-red/20 text-accent-red flex items-center justify-center font-bold text-xs">5</span><p data-id="396">Admin will review synced data and mark games as <strong data-id="397">FINAL</strong> before the week advances.</p></div>
+    </div>
+  </div>
+
+  <!-- Sync Log -->
+  <div data-id="398" class="glass-card p-5 mb-6">
+    <h3 data-id="399" class="font-semibold text-white mb-3">Sync Log</h3>
+    <div data-id="400" class="overflow-x-auto">
+      <table data-id="401">
+        <thead data-id="402"><tr data-id="403"><th data-id="404">Timestamp</th><th data-id="405">Type</th><th data-id="406">Status</th><th data-id="407">Games Updated</th></tr></thead>
+        <tbody data-id="408" id="madden-sync-log">
+          <tr data-id="409"><td data-id="410" colspan="4" class="text-center text-slate-500 py-3">No sync activity yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Manual Entry -->
+  <div data-id="411" class="glass-card p-5">
+    <h3 data-id="412" class="font-semibold text-white mb-3">Manual Score Entry (Backup)</h3>
+    <div data-id="413" class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
+      <select data-id="414" id="madden-manual-week" class="w-full"><option data-id="415" value="1">Week 1</option><option data-id="416" value="2">Week 2</option><option data-id="417" value="3">Week 3</option><option data-id="418" value="4">Week 4</option></select>
+      <select data-id="419" id="madden-manual-away" class="w-full"></select>
+      <select data-id="420" id="madden-manual-home" class="w-full"></select>
+      <input data-id="421" id="madden-manual-ascore" type="number" placeholder="Away Score" class="w-full" />
+      <input data-id="422" id="madden-manual-hscore" type="number" placeholder="Home Score" class="w-full" />
+    </div>
+    <button data-id="423" id="madden-manual-submit" class="btn-red">Submit Manual Score</button>
+  </div>
+</section>
+
+<!-- ==================== DISCORD ==================== -->
+<section data-id="424" id="view-discord" class="view-section">
+  <h2 data-id="425" class="font-display text-3xl text-white mb-6">Discord Community</h2>
+
+  <!-- Join Card -->
+  <div data-id="426" class="glass-card p-6 mb-6 text-center" style="border:1px solid rgba(88,101,242,0.3); background:linear-gradient(135deg,rgba(88,101,242,0.08),rgba(15,20,37,0.85));">
+    <div data-id="427" class="text-5xl mb-3">💬</div>
+    <h3 data-id="428" class="font-display text-2xl text-white mb-2">Join Our Discord Server</h3>
+    <p data-id="429" class="text-sm text-slate-400 mb-4">Stay connected with the league. All announcements, scheduling, and trades happen here.</p>
+    <div data-id="430" class="flex flex-col sm:flex-row gap-2 justify-center items-center mb-3">
+      <input data-id="431" id="discord-invite-url" value="https://discord.gg/rmnfl2026" class="w-full sm:w-80 text-center" />
+      <button data-id="432" id="discord-join-btn" class="btn-red px-8">Join Server</button>
+    </div>
+  </div>
+
+  <div data-id="433" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- Channel Map -->
+    <div data-id="434" class="glass-card p-5">
+      <h3 data-id="435" class="font-semibold text-white mb-4">Channel Guide</h3>
+      <div data-id="436" class="space-y-2 text-sm">
+        <div data-id="437" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">📣 <span data-id="438" class="text-white font-medium">#announcements</span><span data-id="439" class="text-slate-500 ml-auto">League updates</span></div>
+        <div data-id="440" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">📋 <span data-id="441" class="text-white font-medium">#rules</span><span data-id="442" class="text-slate-500 ml-auto">Rule reference</span></div>
+        <div data-id="443" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">🏈 <span data-id="444" class="text-white font-medium">#scores</span><span data-id="445" class="text-slate-500 ml-auto">Post game results</span></div>
+        <div data-id="446" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">💬 <span data-id="447" class="text-white font-medium">#general</span><span data-id="448" class="text-slate-500 ml-auto">Hang out & talk</span></div>
+        <div data-id="449" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">⚡ <span data-id="450" class="text-white font-medium">#discipline</span><span data-id="451" class="text-slate-500 ml-auto">Fines & warnings</span></div>
+        <div data-id="452" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">🎥 <span data-id="453" class="text-white font-medium">#media</span><span data-id="454" class="text-slate-500 ml-auto">Clips & highlights</span></div>
+        <div data-id="455" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">🏆 <span data-id="456" class="text-white font-medium">#playoffs</span><span data-id="457" class="text-slate-500 ml-auto">Postseason talk</span></div>
+        <div data-id="458" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">📅 <span data-id="459" class="text-white font-medium">#scheduling</span><span data-id="460" class="text-slate-500 ml-auto">Schedule games</span></div>
+        <div data-id="461" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">🔊 <span data-id="462" class="text-white font-medium">Voice Channels</span><span data-id="463" class="text-slate-500 ml-auto">Game night voice</span></div>
+        <div data-id="464" class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03]">🤝 <span data-id="465" class="text-white font-medium">#trades</span><span data-id="466" class="text-slate-500 ml-auto">Trade proposals</span></div>
+      </div>
+    </div>
+
+    <!-- Roles -->
+    <div data-id="467" class="glass-card p-5">
+      <h3 data-id="468" class="font-semibold text-white mb-4">Server Roles</h3>
+      <div data-id="469" class="space-y-3 text-sm">
+        <div data-id="470" class="flex items-center gap-3"><span data-id="471" class="w-3 h-3 rounded-full bg-red-500"></span><span data-id="472" class="text-white font-medium">Commissioner</span><span data-id="473" class="text-slate-400">— Full admin access, final say on all decisions</span></div>
+        <div data-id="474" class="flex items-center gap-3"><span data-id="475" class="w-3 h-3 rounded-full bg-orange-500"></span><span data-id="476" class="text-white font-medium">Admin</span><span data-id="477" class="text-slate-400">— Manage schedules, process trades, enforce rules</span></div>
+        <div data-id="478" class="flex items-center gap-3"><span data-id="479" class="w-3 h-3 rounded-full bg-blue-500"></span><span data-id="480" class="text-white font-medium">Team Owner</span><span data-id="481" class="text-slate-400">— Active rostered team owner</span></div>
+        <div data-id="482" class="flex items-center gap-3"><span data-id="483" class="w-3 h-3 rounded-full bg-gray-400"></span><span data-id="484" class="text-white font-medium">Prospect</span><span data-id="485" class="text-slate-400">— Waiting for an open team slot</span></div>
+        <div data-id="486" class="flex items-center gap-3"><span data-id="487" class="w-3 h-3 rounded-full bg-gray-800"></span><span data-id="488" class="text-white font-medium">Suspended</span><span data-id="489" class="text-slate-400">— Temporarily banned from league activities</span></div>
+      </div>
+      <div data-id="490" class="mt-5 pt-4 border-t border-white/5">
+        <h4 data-id="491" class="font-semibold text-white mb-2">Notification Tips</h4>
+        <ul data-id="492" class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+          <li data-id="493">Enable notifications for #announcements and #scheduling</li>
+          <li data-id="494">Mute #general if it gets too chatty during game nights</li>
+          <li data-id="495">Set Discord to "Do Not Disturb" during your games</li>
+          <li data-id="496">Use threads in #trades to discuss specific deals</li>
+          <li data-id="497">Pin important messages for quick reference</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ADMIN ==================== -->
+<section data-id="498" id="view-admin" class="view-section">
+  <h2 data-id="499" class="font-display text-3xl text-white mb-6">Admin Panel</h2>
+  <!-- PIN Lock -->
+  <div data-id="500" id="admin-lock" class="max-w-sm mx-auto">
+    <div data-id="501" class="glass-card p-6 text-center">
+      <div data-id="502" class="text-4xl mb-3"><i data-id="503" data-lucide="lock" class="w-12 h-12 mx-auto text-accent-red"></i></div>
+      <h3 data-id="504" class="font-semibold text-white text-lg mb-4">Admin Access Required</h3>
+      <input data-id="505" id="admin-pin-input" type="password" placeholder="Enter Admin PIN" class="w-full mb-3 text-center text-lg tracking-[0.3em]" maxlength="8" />
+      <button data-id="506" id="admin-pin-submit" class="btn-red w-full">Unlock</button>
+      <p data-id="507" class="text-xs text-slate-500 mt-3">Authorized personnel only</p>
+    </div>
+  </div>
+  <!-- Admin Dashboard (hidden) -->
+  <div data-id="508" id="admin-dashboard" class="hidden space-y-6">
+    <!-- League Settings -->
+    <div data-id="509" class="glass-card p-5">
+      <h3 data-id="510" class="font-semibold text-white mb-4 flex items-center gap-2"><i data-id="511" data-lucide="settings" class="w-5 h-5 text-accent-gold"></i>League Settings</h3>
+      <div data-id="512" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+        <div data-id="513"><label data-id="514" class="text-xs text-slate-400 block mb-1">Season Name</label><input data-id="515" id="admin-season" value="RMNFL Season 2026" class="w-full" /></div>
+        <div data-id="516"><label data-id="517" class="text-xs text-slate-400 block mb-1">Current Week</label><input data-id="518" id="admin-week" type="number" value="4" min="1" max="22" class="w-full" /></div>
+        <div data-id="519"><label data-id="520" class="text-xs text-slate-400 block mb-1">Commissioner</label><input data-id="521" id="admin-commish" value="Musah" class="w-full" /></div>
+        <div data-id="522"><label data-id="523" class="text-xs text-slate-400 block mb-1">Discord URL</label><input data-id="524" id="admin-discord" value="https://discord.gg/rmnfl2026" class="w-full" /></div>
+        <div data-id="525"><label data-id="526" class="text-xs text-slate-400 block mb-1">YouTube URL</label><input data-id="527" id="admin-youtube" class="w-full" /></div>
+        <div data-id="528"><label data-id="529" class="text-xs text-slate-400 block mb-1">Companion App URL</label><input data-id="530" id="admin-companion" value="https://www.ea.com/games/madden-nfl/companion" class="w-full" /></div>
+      </div>
+      <button data-id="531" id="admin-save-settings" class="btn-red">Save Settings</button>
+    </div>
+
+    <!-- Announcements -->
+    <div data-id="532" class="glass-card p-5">
+      <h3 data-id="533" class="font-semibold text-white mb-4 flex items-center gap-2"><i data-id="534" data-lucide="megaphone" class="w-5 h-5 text-accent-gold"></i>Announcements Manager</h3>
+      <div data-id="535" class="flex gap-2 mb-3">
+        <input data-id="536" id="admin-announce-input" placeholder="Type an announcement..." class="flex-1" />
+        <button data-id="537" id="admin-announce-add" class="btn-red">Add</button>
+      </div>
+      <div data-id="538" id="admin-announce-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Team Manager -->
+    <div data-id="539" class="glass-card p-5">
+      <h3 data-id="540" class="font-semibold text-white mb-4 flex items-center gap-2"><i data-id="541" data-lucide="users" class="w-5 h-5 text-accent-red"></i>Team Manager</h3>
+      <div data-id="542" class="overflow-x-auto">
+        <table data-id="543">
+          <thead data-id="544"><tr data-id="545"><th data-id="546">Team</th><th data-id="547">Conference</th><th data-id="548">Division</th><th data-id="549">Owner Name</th></tr></thead>
+          <tbody data-id="550" id="admin-teams-body"></tbody>
+        </table>
+      </div>
+      <button data-id="551" id="admin-save-teams" class="btn-red mt-3">Save All Teams</button>
+    </div>
+
+    <!-- Schedule Manager -->
+    <div data-id="552" class="glass-card p-5">
+      <h3 data-id="553" class="font-semibold text-white mb-4 flex items-center gap-2"><i data-id="554" data-lucide="calendar" class="w-5 h-5 text-blue-400"></i>Schedule Manager</h3>
+      <div data-id="555" class="flex gap-2 mb-3">
+        <select data-id="556" id="admin-sched-week" class="w-48"><option data-id="557" value="1">Week 1</option><option data-id="558" value="2">Week 2</option><option data-id="559" value="3">Week 3</option><option data-id="560" value="4">Week 4</option></select>
+      </div>
+      <div data-id="561" id="admin-sched-games" class="space-y-2"></div>
+    </div>
+
+    <!-- Discipline Log -->
+    <div data-id="562" class="glass-card p-5">
+      <h3 data-id="563" class="font-semibold text-white mb-4 flex items-center gap-2"><i data-id="564" data-lucide="gavel" class="w-5 h-5 text-red-400"></i>Discipline Log</h3>
+      <div data-id="565" class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3">
+        <select data-id="566" id="disc-team" class="w-full"></select>
+        <input data-id="567" id="disc-owner" placeholder="Owner" class="w-full" />
+        <input data-id="568" id="disc-violation" placeholder="Violation" class="w-full" />
+        <input data-id="569" id="disc-fine" type="number" placeholder="Fine ($)" class="w-full" />
+        <select data-id="570" id="disc-status" class="w-full"><option data-id="571">Pending</option><option data-id="572">Paid</option><option data-id="573">Appealed</option><option data-id="574">Waived</option></select>
+      </div>
+      <button data-id="575" id="disc-add-btn" class="btn-red mb-3">Add Discipline Entry</button>
+      <div data-id="576" class="overflow-x-auto">
+        <table data-id="577">
+          <thead data-id="578"><tr data-id="579"><th data-id="580">Date</th><th data-id="581">Team</th><th data-id="582">Owner</th><th data-id="583">Violation</th><th data-id="584">Fine</th><th data-id="585">Status</th><th data-id="586"></th></tr></thead>
+          <tbody data-id="587" id="disc-log-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer data-id="588" class="py-6 text-center border-t border-white/5 mt-8">
+  <p data-id="589" class="text-xs text-slate-500">RMNFL League Platform — Season 2026</p>
+  <p data-id="590" class="text-xs text-slate-600 mt-1">Made by Copilot</p>
+</footer>
+
+<script>
+// ========== GUARD LUCIDE ==========
+if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") { lucide.createIcons(); }
+
+// ========== DEFAULT DATA ==========
+function generateDefaultData() {
+  const teams = [
+    {name:'Buffalo Bills',abbr:'BUF',conf:'AFC',div:'East',owner:'Marcus T.'},
+    {name:'Miami Dolphins',abbr:'MIA',conf:'AFC',div:'East',owner:'James R.'},
+    {name:'New England Patriots',abbr:'NE',conf:'AFC',div:'East',owner:'Devon L.'},
+    {name:'New York Jets',abbr:'NYJ',conf:'AFC',div:'East',owner:'Chris P.'},
+    {name:'Baltimore Ravens',abbr:'BAL',conf:'AFC',div:'North',owner:'Antoine W.'},
+    {name:'Cincinnati Bengals',abbr:'CIN',conf:'AFC',div:'North',owner:'Ray M.'},
+    {name:'Cleveland Browns',abbr:'CLE',conf:'AFC',div:'North',owner:'Tyrone H.'},
+    {name:'Pittsburgh Steelers',abbr:'PIT',conf:'AFC',div:'North',owner:'Kevin S.'},
+    {name:'Houston Texans',abbr:'HOU',conf:'AFC',div:'South',owner:'Darius N.'},
+    {name:'Indianapolis Colts',abbr:'IND',conf:'AFC',div:'South',owner:'Brian C.'},
+    {name:'Jacksonville Jaguars',abbr:'JAX',conf:'AFC',div:'South',owner:'Omar F.'},
+    {name:'Tennessee Titans',abbr:'TEN',conf:'AFC',div:'South',owner:'Malik B.'},
+    {name:'Denver Broncos',abbr:'DEN',conf:'AFC',div:'West',owner:'Carlos V.'},
+    {name:'Kansas City Chiefs',abbr:'KC',conf:'AFC',div:'West',owner:'Jason E.'},
+    {name:'Las Vegas Raiders',abbr:'LV',conf:'AFC',div:'West',owner:'Troy D.'},
+    {name:'Los Angeles Chargers',abbr:'LAC',conf:'AFC',div:'West',owner:'Andre J.'},
+    {name:'Dallas Cowboys',abbr:'DAL',conf:'NFC',div:'East',owner:'Reggie O.'},
+    {name:'New York Giants',abbr:'NYG',conf:'NFC',div:'East',owner:'Terrence A.'},
+    {name:'Philadelphia Eagles',abbr:'PHI',conf:'NFC',div:'East',owner:'Nathan K.'},
+    {name:'Washington Commanders',abbr:'WAS',conf:'NFC',div:'East',owner:'Derek G.'},
+    {name:'Chicago Bears',abbr:'CHI',conf:'NFC',div:'North',owner:'Aaron Z.'},
+    {name:'Detroit Lions',abbr:'DET',conf:'NFC',div:'North',owner:'Jalen Q.'},
+    {name:'Green Bay Packers',abbr:'GB',conf:'NFC',div:'North',owner:'Shane U.'},
+    {name:'Minnesota Vikings',abbr:'MIN',conf:'NFC',div:'North',owner:'Corey I.'},
+    {name:'Atlanta Falcons',abbr:'ATL',conf:'NFC',div:'South',owner:'Preston Y.'},
+    {name:'Carolina Panthers',abbr:'CAR',conf:'NFC',div:'South',owner:'Elijah X.'},
+    {name:'New Orleans Saints',abbr:'NO',conf:'NFC',div:'South',owner:'Damien W.'},
+    {name:'Tampa Bay Buccaneers',abbr:'TB',conf:'NFC',div:'South',owner:'Victor T.'},
+    {name:'Arizona Cardinals',abbr:'ARI',conf:'NFC',div:'West',owner:'Felix S.'},
+    {name:'Los Angeles Rams',abbr:'LAR',conf:'NFC',div:'West',owner:'Grant R.'},
+    {name:'San Francisco 49ers',abbr:'SF',conf:'NFC',div:'West',owner:'Harold Q.'},
+    {name:'Seattle Seahawks',abbr:'SEA',conf:'NFC',div:'West',owner:'Ivan P.'}
+  ];
+
+  const rr = () => Math.floor(Math.random()*4);
+  const standings = {};
+  teams.forEach(t => {
+    const w = rr(), l = rr(), ties = Math.random()<0.1?1:0;
+    const pf = w*24+Math.floor(Math.random()*40)+l*10;
+    const pa = l*24+Math.floor(Math.random()*40)+w*8;
+    const streaks = ['W1','W2','W3','L1','L2','L3'];
+    standings[t.abbr] = { w, l, t:ties, pf, pa, streak: streaks[Math.floor(Math.random()*streaks.length)] };
+  });
+
+  const firstNames = ['Marcus','Jaylen','Tyreek','Lamar','Jalen','Patrick','Josh','Derrick','CeeDee','Justin','Deebo','Cooper','Aidan','Tua','Brock','Travis','Micah','TJ','Aaron','Davante','Garrett','Jaire','Ja\'Marr','Nick','Chris','Sauce','Kyle','George','Amon-Ra','DeVonta'];
+  const lastNames = ['Williams','Johnson','Hill','Jackson','Hurts','Mahomes','Allen','Henry','Lamb','Jefferson','Samuel','Kupp','Hutchinson','Tagovailoa','Purdy','Kelce','Parsons','Watt','Donald','Adams','Wilson','Alexander','Chase','Bosa','Jones','Gardner','Pitts','Kittle','St. Brown','Smith'];
+  const positions = ['QB','RB','WR','WR','TE','OL','OL','DL','LB','CB'];
+
+  const rosters = {};
+  teams.forEach(t => {
+    const players = [];
+    for (let i = 0; i < 10; i++) {
+      const fn = firstNames[Math.floor(Math.random()*firstNames.length)];
+      const ln = lastNames[Math.floor(Math.random()*lastNames.length)];
+      players.push({
+        num: Math.floor(Math.random()*89)+1,
+        name: fn + ' ' + ln,
+        pos: positions[i],
+        ovr: Math.floor(Math.random()*25)+75,
+        age: Math.floor(Math.random()*15)+21,
+        speed: Math.floor(Math.random()*31)+65
+      });
+    }
+    players.sort((a,b) => b.ovr - a.ovr);
+    rosters[t.abbr] = players;
+  });
+
+  const afcTeams = teams.filter(t=>t.conf==='AFC');
+  const nfcTeams = teams.filter(t=>t.conf==='NFC');
+  const week1 = [];
+  for (let i=0;i<16;i++){
+    const a = afcTeams[i%afcTeams.length];
+    const h = nfcTeams[i%nfcTeams.length];
+    week1.push({
+      away: a.abbr, home: h.abbr,
+      date: '2026-09-' + String(10+Math.floor(i/4)).padStart(2,'0'),
+      time: ['1:00 PM','4:05 PM','4:25 PM','8:20 PM'][i%4],
+      status: 'Scheduled', awayScore: null, homeScore: null
+    });
+  }
+  const schedule = { '1': week1 };
+
+  return {
+    settings: { season:'RMNFL Season 2026', week:4, commissioner:'Musah', discord:'https://discord.gg/rmnfl2026', youtube:'', companion:'https://www.ea.com/games/madden-nfl/companion' },
+    teams, standings, rosters, schedule,
+    announcements: [
+      { text:'Welcome to RMNFL Season 2026! All owners must join Discord and sync the Companion App.', date:'2026-08-01' },
+      { text:'Week 4 schedule is live. All games must be played by Sunday midnight.', date:'2026-08-12' },
+      { text:'Trade deadline reminder: All trades must be submitted before Week 12.', date:'2026-08-10' }
+    ],
+    tradeBlock: [],
+    highlights: [],
+    disciplineLog: [],
+    syncLog: [],
+    maddenUrl: 'https://www.ea.com/games/madden-nfl/companion',
+    maddenSync: { lastSync: null, gamesSynced: 0, status: 'PENDING' }
+  };
+}
+
+// ========== DATA LAYER ==========
+let D;
+function loadData() {
+  try {
+    const raw = localStorage.getItem('rmnflData');
+    if (raw) { D = JSON.parse(raw); }
+    else { D = generateDefaultData(); saveData(); }
+  } catch(e) { D = generateDefaultData(); saveData(); }
+  // Ensure all keys exist
+  if(!D.tradeBlock) D.tradeBlock=[];
+  if(!D.highlights) D.highlights=[];
+  if(!D.disciplineLog) D.disciplineLog=[];
+  if(!D.syncLog) D.syncLog=[];
+  if(!D.maddenSync) D.maddenSync={lastSync:null,gamesSynced:0,status:'PENDING'};
+  if(!D.maddenUrl) D.maddenUrl='https://www.ea.com/games/madden-nfl/companion';
+}
+function saveData() {
+  localStorage.setItem('rmnflData', JSON.stringify(D));
+}
+
+loadData();
+
+// ========== TOAST ==========
+function toast(msg, type) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  const colors = { success:'background:#065f46;color:#6ee7b7;', error:'background:#7f1d1d;color:#fca5a5;', info:'background:#1e3a5f;color:#93c5fd;' };
+  t.className = 'toast';
+  t.style.cssText = colors[type||'info'];
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{ if(t.parentNode) t.remove(); }, 3000);
+}
+
+// ========== NAV ==========
+const navBtns = document.querySelectorAll('.nav-tab');
+const views = {
+  home: document.getElementById('view-home'),
+  standings: document.getElementById('view-standings'),
+  schedule: document.getElementById('view-schedule'),
+  scores: document.getElementById('view-scores'),
+  rosters: document.getElementById('view-rosters'),
+  rules: document.getElementById('view-rules'),
+  tradeblock: document.getElementById('view-tradeblock'),
+  media: document.getElementById('view-media'),
+  owner: document.getElementById('view-owner'),
+  madden: document.getElementById('view-madden'),
+  discord: document.getElementById('view-discord'),
+  admin: document.getElementById('view-admin')
+};
+
+function switchView(view) {
+  Object.values(views).forEach(v => v.classList.remove('active'));
+  navBtns.forEach(b => b.classList.remove('active'));
+  if (views[view]) {
+    views[view].classList.add('active');
+    document.querySelector(`[data-view="${view}"]`).classList.add('active');
+    // Scroll nav tab into view on mobile
+    document.querySelector(`[data-view="${view}"]`).scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+    renderView(view);
+  }
+}
+navBtns.forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+
+function renderView(v) {
+  switch(v) {
+    case 'home': renderHome(); break;
+    case 'standings': renderStandings('AFC'); break;
+    case 'schedule': renderSchedule(); break;
+    case 'scores': renderScores(); break;
+    case 'rosters': renderRosters(); break;
+    case 'tradeblock': renderTradeBlock(); break;
+    case 'media': renderMedia(); break;
+    case 'owner': renderOwner(); break;
+    case 'madden': renderMadden(); break;
+    case 'discord': renderDiscord(); break;
+    case 'admin': renderAdmin(); break;
+  }
+}
+
+// ========== HELPERS ==========
+function teamName(abbr) { const t = D.teams.find(t=>t.abbr===abbr); return t? t.name : abbr; }
+function teamOpts(selId) {
+  const sel = document.getElementById(selId);
+  if(!sel) return;
+  sel.innerHTML = '';
+  D.teams.forEach(t => { const o=document.createElement('option'); o.value=t.abbr; o.textContent=t.name; sel.appendChild(o); });
+}
+
+function populateTeamSelects() {
+  ['trade-team','roster-team-select','owner-team-select','madden-manual-away','madden-manual-home','disc-team'].forEach(id => teamOpts(id));
+}
+populateTeamSelects();
+
+// ========== HOME ==========
+function renderHome() {
+  document.getElementById('home-current-week').textContent = D.settings.week;
+  // Games played
+  let gp = 0;
+  Object.values(D.schedule).forEach(wk => wk.forEach(g => { if(g.status==='FINAL') gp++; }));
+  document.getElementById('home-games-played').textContent = gp;
+  document.getElementById('home-active-trades').textContent = D.tradeBlock.length;
+
+  // Recent scores
+  const rs = document.getElementById('home-recent-scores');
+  const finals = [];
+  Object.entries(D.schedule).forEach(([wk,games]) => {
+    games.forEach(g => { if(g.status==='FINAL') finals.push({...g, week:wk}); });
+  });
+  if(finals.length===0) {
+    rs.innerHTML = '<p class="text-slate-500 text-center py-4">No scores submitted yet</p>';
+  } else {
+    rs.innerHTML = finals.slice(-5).reverse().map(g =>
+      `<div class="flex items-center justify-between p-2 rounded-lg bg-white/[0.03]">
+        <span class="text-white font-medium">${teamName(g.away)} <span class="text-accent-gold">${g.awayScore}</span></span>
+        <span class="text-xs text-slate-500">vs</span>
+        <span class="text-white font-medium"><span class="text-accent-gold">${g.homeScore}</span> ${teamName(g.home)}</span>
+        <span class="badge badge-green text-xs">FINAL</span>
+      </div>`
+    ).join('');
+  }
+
+  // Upcoming
+  const up = document.getElementById('home-upcoming');
+  const upcoming = [];
+  Object.entries(D.schedule).forEach(([wk,games]) => {
+    games.forEach(g => { if(g.status!=='FINAL') upcoming.push({...g, week:wk}); });
+  });
+  if(upcoming.length===0) {
+    up.innerHTML = '<p class="text-slate-500 text-center py-4">No upcoming games</p>';
+  } else {
+    up.innerHTML = upcoming.slice(0,5).map(g =>
+      `<div class="flex items-center justify-between p-2 rounded-lg bg-white/[0.03]">
+        <span class="text-white text-sm">${teamName(g.away)} @ ${teamName(g.home)}</span>
+        <span class="text-xs text-slate-500">Wk ${g.week} • ${g.date||'TBD'}</span>
+      </div>`
+    ).join('');
+  }
+
+  // Announcements
+  const ann = document.getElementById('home-announcements');
+  if(D.announcements.length===0) {
+    ann.innerHTML = '<p class="text-slate-500 text-center py-3">No announcements</p>';
+  } else {
+    ann.innerHTML = D.announcements.map(a =>
+      `<div class="p-3 rounded-lg bg-white/[0.03] flex items-start gap-3">
+        <i data-lucide="bell" class="w-4 h-4 text-accent-gold mt-0.5 flex-shrink-0"></i>
+        <div><p class="text-sm text-white">${a.text}</p><p class="text-xs text-slate-500 mt-1">${a.date}</p></div>
+      </div>`
+    ).join('');
+  }
+  refreshIcons();
+}
+
+// ========== STANDINGS ==========
+let currentConf = 'AFC';
+document.querySelectorAll('.conference-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentConf = btn.dataset.conf;
+    document.querySelectorAll('.conference-tab').forEach(b => { b.className = b.dataset.conf===currentConf ? 'btn-red conference-tab' : 'btn-outline conference-tab'; });
+    renderStandings(currentConf);
+  });
+});
+
+function renderStandings(conf) {
+  const el = document.getElementById('standings-content');
+  const divs = ['East','North','South','West'];
+  let html = '';
+  divs.forEach(div => {
+    const divTeams = D.teams.filter(t => t.conf===conf && t.div===div);
+    divTeams.sort((a,b) => {
+      const sa=D.standings[a.abbr], sb=D.standings[b.abbr];
+      if(sb.w!==sa.w) return sb.w-sa.w;
+      if(sa.l!==sb.l) return sa.l-sb.l;
+      return (sb.pf-sb.pa)-(sa.pf-sa.pa);
+    });
+    html += `<div class="glass-card p-4 mb-4">
+      <h4 class="font-display text-lg text-accent-gold mb-3">${conf} ${div}</h4>
+      <div class="overflow-x-auto"><table>
+        <thead><tr><th>Rank</th><th>Team</th><th>Owner</th><th>W</th><th>L</th><th>T</th><th>PF</th><th>PA</th><th>Diff</th><th>Streak</th></tr></thead>
+        <tbody>${divTeams.map((t,i) => {
+          const s = D.standings[t.abbr];
+          const diff = s.pf-s.pa;
+          return `<tr>
+            <td class="font-bold text-white">${i+1}</td>
+            <td class="text-white font-medium">${t.name}</td>
+            <td class="text-slate-400">${t.owner}</td>
+            <td class="text-green-400 font-semibold">${s.w}</td>
+            <td class="text-red-400 font-semibold">${s.l}</td>
+            <td class="text-slate-400">${s.t}</td>
+            <td class="tabular-nums">${s.pf}</td>
+            <td class="tabular-nums">${s.pa}</td>
+            <td class="${diff>=0?'text-green-400':'text-red-400'} tabular-nums">${diff>=0?'+':''}${diff}</td>
+            <td><span class="badge ${s.streak.startsWith('W')?'badge-green':'badge-red'}">${s.streak}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div></div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ========== SCHEDULE ==========
+function renderSchedule() {
+  const wk = document.getElementById('schedule-week-select').value;
+  const el = document.getElementById('schedule-games');
+  const games = D.schedule[wk] || [];
+  if(games.length===0) {
+    el.innerHTML = '<div class="col-span-2 text-center text-slate-500 py-8">No games scheduled for this week</div>';
+    return;
+  }
+  el.innerHTML = games.map((g,i) =>
+    `<div class="glass-card p-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs text-slate-500">${g.date||'TBD'} • ${g.time||'TBD'}</span>
+        <span class="badge ${g.status==='FINAL'?'badge-green':g.status==='In Progress'?'badge-yellow':'badge-gray'}">${g.status}</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="text-center flex-1">
+          <div class="text-white font-semibold text-sm">${teamName(g.away)}</div>
+          <div class="text-xs text-slate-500">Away</div>
+        </div>
+        <div class="text-center px-4">
+          ${g.status==='FINAL'
+            ? `<span class="font-display text-2xl text-accent-gold">${g.awayScore} - ${g.homeScore}</span>`
+            : `<span class="text-slate-500 text-sm font-medium">VS</span>`
+          }
+        </div>
+        <div class="text-center flex-1">
+          <div class="text-white font-semibold text-sm">${teamName(g.home)}</div>
+          <div class="text-xs text-slate-500">Home</div>
+        </div>
+      </div>
+    </div>`
+  ).join('');
+}
+document.getElementById('schedule-week-select').addEventListener('change', renderSchedule);
+
+// ========== SCORES ==========
+function renderScores() {
+  const wk = String(D.settings.week);
+  const el = document.getElementById('scores-games');
+  if(!D.schedule[wk]) D.schedule[wk]=[];
+  const games = D.schedule[wk];
+  if(games.length===0) {
+    el.innerHTML = '<div class="col-span-2 text-center text-slate-500 py-8">No games for current week. Add games in Admin → Schedule Manager.</div>';
+    return;
+  }
+  el.innerHTML = games.map((g,i) =>
+    `<div class="glass-card p-4">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs text-slate-500">Week ${wk} • Game ${i+1}</span>
+        <span class="badge ${g.status==='FINAL'?'badge-green':'badge-gray'}">${g.status}</span>
+      </div>
+      <div class="flex items-center gap-3 mb-3">
+        <div class="flex-1 text-center">
+          <div class="text-white font-semibold text-sm mb-1">${teamName(g.away)}</div>
+          <input type="number" class="w-full text-center score-input" data-wk="${wk}" data-gi="${i}" data-side="away" value="${g.awayScore!==null?g.awayScore:''}" placeholder="0" ${g.status==='FINAL'?'disabled':''} />
+        </div>
+        <span class="text-slate-500 font-bold">VS</span>
+        <div class="flex-1 text-center">
+          <div class="text-white font-semibold text-sm mb-1">${teamName(g.home)}</div>
+          <input type="number" class="w-full text-center score-input" data-wk="${wk}" data-gi="${i}" data-side="home" value="${g.homeScore!==null?g.homeScore:''}" placeholder="0" ${g.status==='FINAL'?'disabled':''} />
+        </div>
+      </div>
+      ${g.status!=='FINAL' ?
+        `<button class="btn-red w-full submit-score-btn" data-wk="${wk}" data-gi="${i}">Submit Score</button>` :
+        `<div class="text-center text-green-400 text-sm font-semibold">✓ Score Submitted</div>`
+      }
+    </div>`
+  ).join('');
+
+  // Bind score submit
+  el.querySelectorAll('.submit-score-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const wk=this.dataset.wk, gi=parseInt(this.dataset.gi);
+      const awayInput = el.querySelector(`[data-wk="${wk}"][data-gi="${gi}"][data-side="away"]`);
+      const homeInput = el.querySelector(`[data-wk="${wk}"][data-gi="${gi}"][data-side="home"]`);
+      const as = parseInt(awayInput.value), hs = parseInt(homeInput.value);
+      if(isNaN(as)||isNaN(hs)||as<0||hs<0) { toast('Please enter valid scores','error'); return; }
+      D.schedule[wk][gi].awayScore = as;
+      D.schedule[wk][gi].homeScore = hs;
+      D.schedule[wk][gi].status = 'FINAL';
+      // Update standings
+      const away = D.schedule[wk][gi].away, home = D.schedule[wk][gi].home;
+      D.standings[away].pf += as; D.standings[away].pa += hs;
+      D.standings[home].pf += hs; D.standings[home].pa += as;
+      if(as > hs) {
+        D.standings[away].w++; D.standings[home].l++;
+        D.standings[away].streak = 'W'+(parseInt(D.standings[away].streak.replace(/\D/g,'')|| '0')+ (D.standings[away].streak.startsWith('W')?1:1));
+        D.standings[home].streak = 'L1';
+      } else if(hs > as) {
+        D.standings[home].w++; D.standings[away].l++;
+        D.standings[home].streak = 'W'+(parseInt(D.standings[home].streak.replace(/\D/g,'')||'0')+(D.standings[home].streak.startsWith('W')?1:1));
+        D.standings[away].streak = 'L1';
+      } else {
+        D.standings[away].t++; D.standings[home].t++;
+      }
+      saveData();
+      toast('Score submitted!','success');
+      renderScores();
+    });
+  });
+}
+
+// ========== ROSTERS ==========
+function renderRosters() {
+  const abbr = document.getElementById('roster-team-select').value;
+  const players = D.rosters[abbr] || [];
+  const body = document.getElementById('roster-body');
+  body.innerHTML = players.map(p =>
+    `<tr>
+      <td class="text-white font-semibold">${p.num}</td>
+      <td class="text-white">${p.name}</td>
+      <td><span class="badge badge-blue">${p.pos}</span></td>
+      <td class="font-semibold ${p.ovr>=90?'text-green-400':p.ovr>=80?'text-accent-gold':'text-slate-300'}">${p.ovr}</td>
+      <td class="tabular-nums">${p.age}</td>
+      <td class="tabular-nums">${p.speed}</td>
+    </tr>`
+  ).join('');
+}
+document.getElementById('roster-team-select').addEventListener('change', renderRosters);
+
+// ========== RULES ACCORDION ==========
+document.querySelectorAll('.accordion-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const content = this.nextElementSibling;
+    const icon = this.querySelector('[data-lucide="chevron-down"]');
+    content.classList.toggle('open');
+    if(icon) icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+});
+
+// ========== TRADE BLOCK ==========
+function renderTradeBlock() {
+  const el = document.getElementById('trade-block-list');
+  if(D.tradeBlock.length===0) {
+    el.innerHTML = '<div class="col-span-3 text-center text-slate-500 py-8">No players on the trade block</div>';
+    return;
+  }
+  el.innerHTML = D.tradeBlock.map((t,i) =>
+    `<div class="glass-card p-4">
+      <div class="flex justify-between items-start mb-2">
+        <div>
+          <div class="text-white font-semibold">${t.player}</div>
+          <div class="text-xs text-slate-400">${teamName(t.team)} • ${t.owner}</div>
+        </div>
+        <button class="text-red-400 hover:text-red-300 trade-del-btn" data-idx="${i}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+      </div>
+      <div class="flex gap-2 mb-2">
+        <span class="badge badge-blue">${t.pos}</span>
+        <span class="badge badge-gold">${t.ovr} OVR</span>
+      </div>
+      <p class="text-xs text-slate-400">${t.notes||'No notes'}</p>
+      <p class="text-xs text-slate-600 mt-2">${t.timestamp}</p>
+    </div>`
+  ).join('');
+  el.querySelectorAll('.trade-del-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      D.tradeBlock.splice(parseInt(this.dataset.idx),1);
+      saveData(); toast('Trade block entry deleted','info'); renderTradeBlock();
+    });
+  });
+  refreshIcons();
+}
+
+document.getElementById('trade-submit-btn').addEventListener('click', function() {
+  const owner = document.getElementById('trade-owner').value.trim();
+  const team = document.getElementById('trade-team').value;
+  const player = document.getElementById('trade-player').value.trim();
+  const pos = document.getElementById('trade-pos').value;
+  const ovr = document.getElementById('trade-ovr').value;
+  const notes = document.getElementById('trade-notes').value.trim();
+  if(!owner||!player||!pos||!ovr) { toast('Please fill in all required fields','error'); return; }
+  D.tradeBlock.push({ owner, team, player, pos, ovr:parseInt(ovr), notes, timestamp: new Date().toLocaleString() });
+  saveData();
+  toast('Player posted to trade block!','success');
+  document.getElementById('trade-owner').value='';
+  document.getElementById('trade-player').value='';
+  document.getElementById('trade-ovr').value='';
+  document.getElementById('trade-notes').value='';
+  renderTradeBlock();
+});
+
+// ========== MEDIA ==========
+function renderMedia() {
+  const ytUrl = D.settings.youtube || '';
+  document.getElementById('media-yt-url').value = ytUrl;
+  const link = document.getElementById('media-yt-link');
+  link.href = ytUrl || '#';
+  link.textContent = ytUrl ? 'Open YouTube Channel →' : 'No channel URL set';
+
+  const hl = document.getElementById('media-highlights');
+  const noHl = document.getElementById('media-no-highlights');
+  if(D.highlights.length > 0) {
+    noHl.style.display = 'none';
+    hl.innerHTML = D.highlights.map(h =>
+      `<div class="flex items-center justify-between p-2 rounded-lg bg-white/[0.03]">
+        <div class="flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4 text-accent-red"></i><span class="text-white text-sm">${h.title}</span></div>
+        <a href="${h.url}" target="_blank" class="text-accent-red text-xs hover:underline">Watch →</a>
+      </div>`
+    ).join('');
+    refreshIcons();
+  } else {
+    noHl.style.display = 'block';
+    hl.innerHTML = '';
+  }
+}
+
+document.getElementById('media-yt-save').addEventListener('click', function() {
+  D.settings.youtube = document.getElementById('media-yt-url').value.trim();
+  saveData(); toast('YouTube URL saved!','success'); renderMedia();
+});
+
+// ========== OWNER PORTAL ==========
+let loggedInOwner = null;
+
+function renderOwner() {
+  if(loggedInOwner) {
+    document.getElementById('owner-login').classList.add('hidden');
+    document.getElementById('owner-dashboard').classList.remove('hidden');
+    const team = D.teams.find(t=>t.abbr===loggedInOwner);
+    const s = D.standings[loggedInOwner];
+    document.getElementById('owner-team-name').textContent = team.name + ' — ' + team.owner;
+    document.getElementById('owner-record').textContent = `${s.w}-${s.l}-${s.t}`;
+    document.getElementById('owner-pf').textContent = s.pf;
+    document.getElementById('owner-pa').textContent = s.pa;
+
+    // Next games
+    const ng = document.getElementById('owner-next-games');
+    const myGames = [];
+    Object.entries(D.schedule).forEach(([wk,games]) => {
+      games.forEach(g => { if((g.away===loggedInOwner||g.home===loggedInOwner)&&g.status!=='FINAL') myGames.push({...g,week:wk}); });
+    });
+    ng.innerHTML = myGames.slice(0,3).map(g =>
+      `<div class="flex justify-between p-2 rounded-lg bg-white/[0.03]">
+        <span class="text-white">${g.away===loggedInOwner?'@'+teamName(g.home):'vs '+teamName(g.away)}</span>
+        <span class="text-xs text-slate-500">Wk ${g.week}</span>
+      </div>`
+    ).join('') || '<p class="text-slate-500">No upcoming games</p>';
+
+    // Score games dropdown
+    const sg = document.getElementById('owner-score-game');
+    sg.innerHTML = '<option value="">Select a game</option>';
+    myGames.forEach((g,i) => {
+      const o = document.createElement('option');
+      o.value = JSON.stringify({week:g.week,away:g.away,home:g.home});
+      o.textContent = `Wk ${g.week}: ${teamName(g.away)} @ ${teamName(g.home)}`;
+      sg.appendChild(o);
+    });
+
+    // Roster
+    const rb = document.getElementById('owner-roster-body');
+    const players = D.rosters[loggedInOwner]||[];
+    rb.innerHTML = players.map(p =>
+      `<tr><td>${p.num}</td><td class="text-white">${p.name}</td><td><span class="badge badge-blue">${p.pos}</span></td><td class="font-semibold ${p.ovr>=90?'text-green-400':'text-accent-gold'}">${p.ovr}</td><td>${p.age}</td><td>${p.speed}</td></tr>`
+    ).join('');
+  } else {
+    document.getElementById('owner-login').classList.remove('hidden');
+    document.getElementById('owner-dashboard').classList.add('hidden');
+  }
+}
+
+document.getElementById('owner-login-btn').addEventListener('click', function() {
+  const team = document.getElementById('owner-team-select').value;
+  const pw = document.getElementById('owner-password').value;
+  if(pw === 'rmnfl2026') {
+    loggedInOwner = team;
+    toast('Welcome, ' + teamName(team) + '!','success');
+    renderOwner();
+  } else {
+    toast('Incorrect password','error');
+  }
+});
+
+document.getElementById('owner-logout-btn').addEventListener('click', function() {
+  loggedInOwner = null;
+  document.getElementById('owner-password').value = '';
+  toast('Logged out','info');
+  renderOwner();
+});
+
+document.getElementById('owner-score-submit').addEventListener('click', function() {
+  const sel = document.getElementById('owner-score-game').value;
+  if(!sel) { toast('Select a game first','error'); return; }
+  const as = parseInt(document.getElementById('owner-score-away').value);
+  const hs = parseInt(document.getElementById('owner-score-home').value);
+  if(isNaN(as)||isNaN(hs)||as<0||hs<0) { toast('Enter valid scores','error'); return; }
+  const info = JSON.parse(sel);
+  const games = D.schedule[info.week]||[];
+  const gi = games.findIndex(g=>g.away===info.away&&g.home===info.home);
+  if(gi===-1) { toast('Game not found','error'); return; }
+  games[gi].awayScore=as; games[gi].homeScore=hs; games[gi].status='FINAL';
+  D.standings[info.away].pf+=as; D.standings[info.away].pa+=hs;
+  D.standings[info.home].pf+=hs; D.standings[info.home].pa+=as;
+  if(as>hs){D.standings[info.away].w++;D.standings[info.home].l++;}
+  else if(hs>as){D.standings[info.home].w++;D.standings[info.away].l++;}
+  else{D.standings[info.away].t++;D.standings[info.home].t++;}
+  saveData(); toast('Score submitted!','success');
+  document.getElementById('owner-score-away').value='';
+  document.getElementById('owner-score-home').value='';
+  renderOwner();
+});
+
+// ========== MADDEN SYNC ==========
+function renderMadden() {
+  document.getElementById('madden-url').value = D.maddenUrl;
+  document.getElementById('madden-last-sync').textContent = D.maddenSync.lastSync || 'Never';
+  document.getElementById('madden-games-synced').textContent = D.maddenSync.gamesSynced;
+  const statusEl = document.getElementById('madden-status');
+  statusEl.textContent = D.maddenSync.status;
+  statusEl.className = 'badge ' + (D.maddenSync.status==='SYNCED'?'badge-green':'badge-yellow');
+
+  // Sync log
+  const sl = document.getElementById('madden-sync-log');
+  if(D.syncLog.length===0) {
+    sl.innerHTML = '<tr><td colspan="4" class="text-center text-slate-500 py-3">No sync activity yet</td></tr>';
+  } else {
+    sl.innerHTML = D.syncLog.map(l =>
+      `<tr><td class="text-xs">${l.timestamp}</td><td>${l.type}</td><td><span class="badge ${l.status==='Success'?'badge-green':'badge-yellow'}">${l.status}</span></td><td class="tabular-nums">${l.gamesUpdated}</td></tr>`
+    ).join('');
+  }
+}
+
+document.getElementById('madden-copy-btn').addEventListener('click', function() {
+  const url = document.getElementById('madden-url').value;
+  navigator.clipboard.writeText(url).then(()=>toast('URL copied to clipboard!','success')).catch(()=>toast('Copy failed','error'));
+});
+
+document.getElementById('madden-open-btn').addEventListener('click', function() {
+  const url = document.getElementById('madden-url').value;
+  if(url) window.open(url, '_blank');
+});
+
+document.getElementById('madden-save-btn').addEventListener('click', function() {
+  D.maddenUrl = document.getElementById('madden-url').value.trim();
+  saveData(); toast('Companion App URL saved!','success');
+});
+
+document.getElementById('madden-manual-submit').addEventListener('click', function() {
+  const wk = document.getElementById('madden-manual-week').value;
+  const away = document.getElementById('madden-manual-away').value;
+  const home = document.getElementById('madden-manual-home').value;
+  const as = parseInt(document.getElementById('madden-manual-ascore').value);
+  const hs = parseInt(document.getElementById('madden-manual-hscore').value);
+  if(away===home) { toast('Away and Home teams must be different','error'); return; }
+  if(isNaN(as)||isNaN(hs)||as<0||hs<0) { toast('Enter valid scores','error'); return; }
+  if(!D.schedule[wk]) D.schedule[wk]=[];
+  D.schedule[wk].push({ away, home, date:'Manual', time:'Manual', status:'FINAL', awayScore:as, homeScore:hs });
+  D.standings[away].pf+=as; D.standings[away].pa+=hs;
+  D.standings[home].pf+=hs; D.standings[home].pa+=as;
+  if(as>hs){D.standings[away].w++;D.standings[home].l++;}
+  else if(hs>as){D.standings[home].w++;D.standings[away].l++;}
+  else{D.standings[away].t++;D.standings[home].t++;}
+  D.maddenSync.gamesSynced++;
+  D.maddenSync.lastSync = new Date().toLocaleString();
+  D.maddenSync.status = 'SYNCED';
+  D.syncLog.push({ timestamp: new Date().toLocaleString(), type:'Manual Entry', status:'Success', gamesUpdated:1 });
+  saveData(); toast('Manual score submitted & synced!','success');
+  document.getElementById('madden-manual-ascore').value='';
+  document.getElementById('madden-manual-hscore').value='';
+  renderMadden();
+});
+
+// ========== DISCORD ==========
+function renderDiscord() {
+  document.getElementById('discord-invite-url').value = D.settings.discord || 'https://discord.gg/rmnfl2026';
+}
+
+document.getElementById('discord-join-btn').addEventListener('click', function() {
+  const url = document.getElementById('discord-invite-url').value;
+  if(url) window.open(url, '_blank');
+});
+
+// ========== ADMIN ==========
+let adminUnlocked = false;
+
+function renderAdmin() {
+  if(!adminUnlocked) {
+    document.getElementById('admin-lock').classList.remove('hidden');
+    document.getElementById('admin-dashboard').classList.add('hidden');
+    return;
+  }
+  document.getElementById('admin-lock').classList.add('hidden');
+  document.getElementById('admin-dashboard').classList.remove('hidden');
+
+  document.getElementById('admin-season').value = D.settings.season;
+  document.getElementById('admin-week').value = D.settings.week;
+  document.getElementById('admin-commish').value = D.settings.commissioner;
+  document.getElementById('admin-discord').value = D.settings.discord;
+  document.getElementById('admin-youtube').value = D.settings.youtube||'';
+  document.getElementById('admin-companion').value = D.settings.companion||D.maddenUrl;
+
+  // Announcements
+  renderAdminAnnouncements();
+
+  // Teams
+  const tbody = document.getElementById('admin-teams-body');
+  tbody.innerHTML = D.teams.map((t,i) =>
+    `<tr>
+      <td class="text-white font-medium">${t.name}</td>
+      <td class="text-slate-400">${t.conf}</td>
+      <td class="text-slate-400">${t.div}</td>
+      <td><input class="admin-owner-input w-full" data-idx="${i}" value="${t.owner}" /></td>
+    </tr>`
+  ).join('');
+
+  // Schedule Manager
+  renderAdminSchedule();
+
+  // Discipline
+  renderDiscipline();
+
+  // Discipline team dropdown
+  teamOpts('disc-team');
+}
+
+function renderAdminAnnouncements() {
+  const el = document.getElementById('admin-announce-list');
+  el.innerHTML = D.announcements.map((a,i) =>
+    `<div class="flex items-center justify-between p-2 rounded-lg bg-white/[0.03]">
+      <div><span class="text-sm text-white">${a.text}</span><span class="text-xs text-slate-500 ml-2">${a.date}</span></div>
+      <button class="text-red-400 hover:text-red-300 ann-del-btn" data-idx="${i}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+    </div>`
+  ).join('');
+  el.querySelectorAll('.ann-del-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      D.announcements.splice(parseInt(this.dataset.idx),1);
+      saveData(); toast('Announcement deleted','info'); renderAdminAnnouncements();
+    });
+  });
+  refreshIcons();
+}
+
+function renderAdminSchedule() {
+  const wk = document.getElementById('admin-sched-week').value;
+  const el = document.getElementById('admin-sched-games');
+  const games = D.schedule[wk]||[];
+  if(games.length===0) {
+    el.innerHTML = '<p class="text-slate-500 text-sm">No games for this week</p>';
+    return;
+  }
+  el.innerHTML = games.map((g,i) =>
+    `<div class="flex flex-wrap items-center gap-2 p-2 rounded-lg bg-white/[0.03]">
+      <span class="text-white text-sm font-medium w-full md:w-auto">${teamName(g.away)} @ ${teamName(g.home)}</span>
+      <input class="admin-game-date w-32" data-wk="${wk}" data-gi="${i}" data-field="date" value="${g.date||''}" placeholder="Date" />
+      <input class="admin-game-time w-28" data-wk="${wk}" data-gi="${i}" data-field="time" value="${g.time||''}" placeholder="Time" />
+      <span class="badge ${g.status==='FINAL'?'badge-green':'badge-gray'} text-xs">${g.status}</span>
+    </div>`
+  ).join('');
+  // Bind date/time changes
+  el.querySelectorAll('.admin-game-date,.admin-game-time').forEach(inp => {
+    inp.addEventListener('change', function() {
+      const wk=this.dataset.wk, gi=parseInt(this.dataset.gi), field=this.dataset.field;
+      D.schedule[wk][gi][field] = this.value;
+      saveData();
+    });
+  });
+}
+
+function renderDiscipline() {
+  const body = document.getElementById('disc-log-body');
+  if(D.disciplineLog.length===0) {
+    body.innerHTML = '<tr><td colspan="7" class="text-center text-slate-500 py-3">No discipline entries</td></tr>';
+    return;
+  }
+  body.innerHTML = D.disciplineLog.map((d,i) =>
+    `<tr>
+      <td class="text-xs">${d.date}</td>
+      <td class="text-white">${teamName(d.team)}</td>
+      <td>${d.owner}</td>
+      <td>${d.violation}</td>
+      <td class="text-accent-gold font-semibold">$${Number(d.fine).toLocaleString()}</td>
+      <td><span class="badge ${d.status==='Paid'?'badge-green':d.status==='Pending'?'badge-yellow':d.status==='Appealed'?'badge-blue':'badge-gray'}">${d.status}</span></td>
+      <td><button class="text-red-400 hover:text-red-300 disc-del-btn" data-idx="${i}"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+    </tr>`
+  ).join('');
+  body.querySelectorAll('.disc-del-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      D.disciplineLog.splice(parseInt(this.dataset.idx),1);
+      saveData(); toast('Entry removed','info'); renderDiscipline();
+    });
+  });
+  refreshIcons();
+}
+
+document.getElementById('admin-pin-submit').addEventListener('click', function() {
+  const pin = document.getElementById('admin-pin-input').value;
+  if(pin === 'RMNFL2024') {
+    adminUnlocked = true;
+    toast('Admin access granted','success');
+    renderAdmin();
+  } else {
+    toast('Incorrect PIN','error');
+  }
+});
+
+document.getElementById('admin-save-settings').addEventListener('click', function() {
+  D.settings.season = document.getElementById('admin-season').value.trim();
+  D.settings.week = parseInt(document.getElementById('admin-week').value)||1;
+  D.settings.commissioner = document.getElementById('admin-commish').value.trim();
+  D.settings.discord = document.getElementById('admin-discord').value.trim();
+  D.settings.youtube = document.getElementById('admin-youtube').value.trim();
+  D.settings.companion = document.getElementById('admin-companion').value.trim();
+  D.maddenUrl = D.settings.companion;
+  saveData(); toast('League settings saved!','success');
+});
+
+document.getElementById('admin-announce-add').addEventListener('click', function() {
+  const text = document.getElementById('admin-announce-input').value.trim();
+  if(!text) { toast('Enter announcement text','error'); return; }
+  D.announcements.unshift({ text, date: new Date().toLocaleDateString() });
+  saveData(); toast('Announcement added!','success');
+  document.getElementById('admin-announce-input').value='';
+  renderAdminAnnouncements();
+});
+
+document.getElementById('admin-save-teams').addEventListener('click', function() {
+  document.querySelectorAll('.admin-owner-input').forEach(inp => {
+    D.teams[parseInt(inp.dataset.idx)].owner = inp.value.trim();
+  });
+  saveData(); toast('Team owners saved!','success');
+  populateTeamSelects();
+});
+
+document.getElementById('admin-sched-week').addEventListener('change', renderAdminSchedule);
+
+document.getElementById('disc-add-btn').addEventListener('click', function() {
+  const team = document.getElementById('disc-team').value;
+  const owner = document.getElementById('disc-owner').value.trim();
+  const violation = document.getElementById('disc-violation').value.trim();
+  const fine = document.getElementById('disc-fine').value;
+  const status = document.getElementById('disc-status').value;
+  if(!owner||!violation||!fine) { toast('Fill in all fields','error'); return; }
+  D.disciplineLog.push({ date: new Date().toLocaleDateString(), team, owner, violation, fine:parseInt(fine), status });
+  saveData(); toast('Discipline entry added','success');
+  document.getElementById('disc-owner').value='';
+  document.getElementById('disc-violation').value='';
+  document.getElementById('disc-fine').value='';
+  renderDiscipline();
+});
+
+// ========== REFRESH LUCIDE ICONS ==========
+function refreshIcons() {
+  if(typeof lucide!=="undefined"&&typeof lucide.createIcons==="function") lucide.createIcons();
+}
+
+// ========== INITIAL RENDER ==========
+renderHome();
+
+</script>
+</body>
+</html>
